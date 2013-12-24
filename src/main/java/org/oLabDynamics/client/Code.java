@@ -65,6 +65,20 @@ public class Code extends ResourceSupport {
 		return response.getBody();
 	}
 
+	public Publication getPublication() {
+		class Local {};
+		Method currentMethod = Local.class.getEnclosingMethod();
+		String currentMethodName = currentMethod.getName();
+		String attributeName = currentMethodName.substring(3, 4).toLowerCase() + currentMethodName.substring(4);
+		
+		Link link = super.getLink(attributeName);
+		String href = link.getHref();
+
+		ResponseEntity<Publication> response = restTemplate.exchange(href, HttpMethod.GET, entity, Publication.class);
+    	
+		return response.getBody();
+	}
+	
 	public String getDescription() {
 		return description;
 	}
@@ -106,7 +120,6 @@ public class Code extends ResourceSupport {
 	}
 
 
-	
 	
 	
 }

@@ -74,6 +74,14 @@ public class MainBenchmarking {
 				System.out.println("probleme car les 2 codes sont différentes");
 			}
 			
+			Publication publication2 = code.getPublication();
+			
+			if(publication2.equals(publication)){
+				System.out.println("les deux publis sont égales");
+			} else{
+				System.out.println("probleme car les 2 publis sont différentes");
+			}
+			
 			InputData inputData = code.getReferenceInputData();
 			System.out.println(inputData);
 			
