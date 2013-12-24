@@ -71,6 +71,19 @@ public class CompanionSite extends ResourceSupport{
 	public String toString() {
 		return "CompanionSite [toString()=" + super.toString() + "]";
 	}
+
+	public Code getReferenceImplementation() {
+		class Local {};
+		Method currentMethod = Local.class.getEnclosingMethod();
+		String currentMethodName = currentMethod.getName();
+		String attributeName = currentMethodName.substring(3, 4).toLowerCase() + currentMethodName.substring(4);
+		Link link = super.getLink(attributeName);
+		String href = link.getHref();
+		
+		ResponseEntity<Code> response = restTemplate.exchange(href, HttpMethod.GET, entity, Code.class);
+    	
+		return response.getBody();
+	}
 	
 	
 	

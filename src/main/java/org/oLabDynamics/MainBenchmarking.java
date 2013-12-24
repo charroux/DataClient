@@ -62,7 +62,7 @@ public class MainBenchmarking {
 			CompanionSite companionSite = publication.getCompanionSite();
 			System.out.println(companionSite);
 			
-			Code code = companionSite.getCode();
+			Code code = companionSite.getReferenceImplementation();
 			System.out.println(code);
 			
 			InputData inputData = code.getInputData();
