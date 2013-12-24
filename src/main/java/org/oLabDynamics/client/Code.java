@@ -1,6 +1,8 @@
 package org.oLabDynamics.client;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.hateoas.Link;
 import org.oLabDynamics.rest.ResourceSupport;
@@ -45,7 +47,11 @@ public class Code extends ResourceSupport {
 		return response.getBody();
 	}
 	
-	public InputData getInputData(){
+	public List<InputData> getInputs(){
+		return new ArrayList<InputData>();
+	}
+	
+	public InputData getReferenceInputData() {
 		class Local {};
 		Method currentMethod = Local.class.getEnclosingMethod();
 		String currentMethodName = currentMethod.getName();
@@ -98,6 +104,8 @@ public class Code extends ResourceSupport {
 			return false;
 		return true;
 	}
+
+
 	
 	
 	

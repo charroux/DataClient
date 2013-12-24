@@ -62,10 +62,19 @@ public class MainBenchmarking {
 			CompanionSite companionSite = publication.getCompanionSite();
 			System.out.println(companionSite);
 			
+			Code referenceImplementation = publication.getReferenceImplementation();
+			System.out.println(referenceImplementation);
+			
 			Code code = companionSite.getReferenceImplementation();
 			System.out.println(code);
 			
-			InputData inputData = code.getInputData();
+			if(referenceImplementation.equals(code)){
+				System.out.println("les deux codes sont égaux");
+			} else{
+				System.out.println("probleme car les 2 codes sont différentes");
+			}
+			
+			InputData inputData = code.getReferenceInputData();
 			System.out.println(inputData);
 			
 			Program program = new Program();
