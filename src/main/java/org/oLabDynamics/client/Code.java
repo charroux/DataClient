@@ -3,7 +3,7 @@ package org.oLabDynamics.client;
 import java.lang.reflect.Method;
 
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.ResourceSupport;
+import org.oLabDynamics.rest.ResourceSupport;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;

@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.ResourceSupport;
+import org.oLabDynamics.rest.ResourceSupport;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;

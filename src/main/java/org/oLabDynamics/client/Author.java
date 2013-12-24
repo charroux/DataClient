@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.ResourceSupport;
+import org.oLabDynamics.rest.ResourceSupport;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -20,7 +20,8 @@ public class Author extends ResourceSupport {
 	RestTemplate restTemplate;
 	HttpEntity<String> entity;
 	
-	String name;
+	String firstName;
+	String lastName;
 	
 	public Author(){
 		restTemplate = new RestTemplate();
@@ -34,13 +35,23 @@ public class Author extends ResourceSupport {
         entity = new HttpEntity<String>(headers);
 	}
 
-	public String getName() {
-		return name;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+
 
 	public List<Publication> getPublications() {
 		class Local {};
@@ -58,15 +69,18 @@ public class Author extends ResourceSupport {
 
 	@Override
 	public String toString() {
-		return "Author [name=" + name + ", toString()=" + super.toString()
-				+ "]";
+		return "Author [firstName=" + firstName + ", lastName=" + lastName
+				+ ", toString()=" + super.toString() + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result
+				+ ((firstName == null) ? 0 : firstName.hashCode());
+		result = prime * result
+				+ ((lastName == null) ? 0 : lastName.hashCode());
 		return result;
 	}
 
@@ -79,13 +93,20 @@ public class Author extends ResourceSupport {
 		if (getClass() != obj.getClass())
 			return false;
 		Author other = (Author) obj;
-		if (name == null) {
-			if (other.name != null)
+		if (firstName == null) {
+			if (other.firstName != null)
 				return false;
-		} else if (!name.equals(other.name))
+		} else if (!firstName.equals(other.firstName))
+			return false;
+		if (lastName == null) {
+			if (other.lastName != null)
+				return false;
+		} else if (!lastName.equals(other.lastName))
 			return false;
 		return true;
 	}
+
+	
 
 	
 	
