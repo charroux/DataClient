@@ -35,7 +35,11 @@ public class Publication extends ResourceSupport {
 	
 	
 	public void setTitle(String title) {
-		this.title = title;
+		if(this.title == null){
+			this.title = title;	// utilisé par Jackson pour initialisation à partir de JSon
+		} else {
+			throw new SecurityException("Unauthorised");
+		}
 	}
 
 	public String getTitle() {

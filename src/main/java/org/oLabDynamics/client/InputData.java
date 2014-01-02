@@ -49,7 +49,11 @@ public class InputData extends ResourceSupport {
 	}
 
 	public void setDescription(String description) {
-		this.description = description;
+		if(this.description == null){
+			this.description = description;	// utilisé par Jackson pour initialisation à partir de JSon
+		} else {
+			throw new SecurityException("Unauthorised");
+		}
 	}
 
 	@Override

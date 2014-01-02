@@ -40,7 +40,11 @@ public class Author extends ResourceSupport {
 	}
 
 	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+		if(this.firstName == null){
+			this.firstName = firstName;	// utilisé par Jackson pour initialisation à partir de JSon
+		} else {
+			throw new SecurityException("Unauthorised");
+		}
 	}
 
 	public String getLastName() {
@@ -48,7 +52,11 @@ public class Author extends ResourceSupport {
 	}
 
 	public void setLastName(String lastName) {
-		this.lastName = lastName;
+		if(this.lastName == null){
+			this.lastName = lastName;	// utilisé par Jackson pour initialisation à partir de JSon
+		} else {
+			throw new SecurityException("Unauthorised");
+		}
 	}
 
 

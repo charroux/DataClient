@@ -13,6 +13,7 @@ import org.oLabDynamics.client.Program;
 import org.oLabDynamics.client.Publication;
 import org.oLabDynamics.client.Query;
 import org.oLabDynamics.client.Query.FilterOperator;
+import org.oLabDynamics.client.SecurityException;
 import org.oLabDynamics.client.ThematicSite;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -45,6 +46,12 @@ public class MainBenchmarking {
 			List<Publication> publis = author.getPublications();
 			Publication publication = publis.get(0);
 			System.out.println(publication);
+			
+			try{
+			publication.setTitle("Tentative changement titre");
+			}catch(SecurityException e ){
+				System.out.println(e);
+			}
 			
 			String title = publication.getTitle();
 			query = new Query("publication");
