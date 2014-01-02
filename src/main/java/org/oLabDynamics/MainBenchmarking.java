@@ -64,7 +64,7 @@ public class MainBenchmarking {
 			
 			Code referenceImplementation = publication.getReferenceImplementation();
 			System.out.println(referenceImplementation);
-			
+
 			Code code = companionSite.getReferenceImplementation();
 			System.out.println(code);
 			
