@@ -1,6 +1,7 @@
 package org.oLabDynamics.client;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -24,15 +25,24 @@ public class Author extends ResourceSupport {
 	String lastName;
 	
 	public Author(){
-		restTemplate = new RestTemplate();
+		ExecShare execShare = ExecShare.getInstance();
+		restTemplate = execShare.getRestTemplate();
     	HttpHeaders headers = new HttpHeaders();
     	headers.setContentType(MediaType.APPLICATION_JSON);
-    	String auth = "temporary" + ":" + "temporary";
     	
+    	ExecShareConnexionFactory connexionFactory = execShare.getExecShareConnexionFactory();
+    	String auth = connexionFactory.getUserName() + ":" + connexionFactory.getPassword();
+
     	byte[] encodedAuthorisation = Base64.encode(auth.getBytes());
         headers.add("Authorization", "Basic " + new String(encodedAuthorisation));
         
         entity = new HttpEntity<String>(headers);
+	}
+
+	public Author(String firstName, String lastName) {
+		this();
+		this.firstName = firstName;
+		this.lastName = lastName;
 	}
 
 	public String getFirstName() {
@@ -52,6 +62,13 @@ public class Author extends ResourceSupport {
 	}
 
 
+	void addPublication(Publication publication) {
+		...
+	}
+
+	void removePublication(Publication publication) {
+		...
+	}
 
 	public List<Publication> getPublications() {
 		class Local {};
@@ -59,6 +76,9 @@ public class Author extends ResourceSupport {
 		String currentMethodName = currentMethod.getName();
 		String attributeName = currentMethodName.substring(3, 4).toLowerCase() + currentMethodName.substring(4);
 		Link link = super.getLink(attributeName);
+		if(link == null){
+			return new ArrayList<Publication>();
+		}
 		String href = link.getHref();
 		
 		ParameterizedTypeReference<List<Publication>> typeRef = new ParameterizedTypeReference<List<Publication>>() {};
@@ -105,6 +125,8 @@ public class Author extends ResourceSupport {
 			return false;
 		return true;
 	}
+
+
 
 	
 

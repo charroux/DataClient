@@ -1,19 +1,24 @@
 package org.oLabDynamics;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.oLabDynamics.client.Author;
 import org.oLabDynamics.client.Code;
 import org.oLabDynamics.client.CompanionSite;
+import org.oLabDynamics.client.Configuration;
 import org.oLabDynamics.client.ExecShare;
 import org.oLabDynamics.client.InputData;
+import org.oLabDynamics.client.Linux;
+import org.oLabDynamics.client.OperatingSystem;
 import org.oLabDynamics.client.Program;
 import org.oLabDynamics.client.Publication;
 import org.oLabDynamics.client.Query;
 import org.oLabDynamics.client.Query.FilterOperator;
 import org.oLabDynamics.client.ThematicSite;
+import org.oLabDynamics.client.UnsupportedConfigurationException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.hateoas.Link;
@@ -33,212 +38,69 @@ public class MainCreateNewPublication {
 	public static void main(String[] args) {
 		
 		try{
-
+			
+			Publication publication = new Publication("Un nouvel algorithme", Publication.Type.WorkingPaper);
+			
+			List<Author> authors = new ArrayList<Author>();
+			
+			Author author = new Author("Christophe", "Marchand");
+			authors.add(author);
+			
+			author = new Author("Paul", "Durand");
+			authors.add(author);
+			
+			publication.setAuthors(authors);
+			
+			String login = "myLogin";
+			String password = "myPassword";
+			
+			publication.publish(Publication.PublicationMode.ForContactsOnly);
+			
+			File code = new File("MonCode.mat");
+			Code referenceImplementation = new Code(code);
+			
+			Configuration configuration;
+			
 			ExecShare execShare = new ExecShare();
-			
 			Query query = new Query("configuration");
-			query.addFilter("programmingLanguage", Query.FilterOperator.EQUAL, "C");
-			query.addFilter("operatingSystem.name", Query.FilterOperator.EQUAL, "Linux");
+			query.addFilter("operatingSystem.distribution", Query.FilterOperator.EQUAL, "CentOs");
+			query.addFilter("version", Query.FilterOperator.EQUAL, "2.3");
+			query.addFilter("programmingLanguage", Query.FilterOperator.EQUAL, "Matlab");
+			query.addFilter("libraries", Query.FilterOperator.CONTAIN, "Toolbox1", "Toobox2");
 			List<Configuration> configurations = execShare.prepare(query);
-			Configuration configuration = configurations.get(0);
-			System.out.println(configuration);
+			if(configurations.size() == 0){	// configuration demandée inexistante => demande crétion nouvelle configuration
 			
-			List<Publication> publis = author.getPublications();
-			Publication publication = publis.get(0);
-			System.out.println(publication);
-			
-			String title = publication.getTitle();
-			query = new Query("publication");
-			query.addFilter("title", Query.FilterOperator.EQUAL, title);
-			publis = execShare.prepare(query);
-			Publication publication1 = publis.get(0);
-			System.out.println(publication1);
-			
-			if(publication.equals(publication1)){
-				System.out.println("les deux publis sont égales");
-			} else{
-				System.out.println("probleme car les 2 publis sont différentes");
+				String programmingLanguage = "Matlab";
+				configuration = new Configuration(programmingLanguage);
+				Linux linux = new Linux("Centos", "2.3");
+				configuration.setOperatingSystem(linux);
+				Library library = new Library("Toolbox1");
+				configuration.addLibrary(library);
+				library = new Library("Toolbox2");
+				configuration.addLibrary(library);
+				
 			}
 			
-			CompanionSite companionSite = publication.getCompanionSite();
-			System.out.println(companionSite);
+			referenceImplementation.setConfiguration(configuration);
+				
+			publication.setReferenceImplementation(referenceImplementation);
 			
-			Code referenceImplementation = publication.getReferenceImplementation();
-			System.out.println(referenceImplementation);
+			File data = new File("mydata");
+			InputData inputData = new InputData(data);
 			
-			Configuration configuration = referenceImplementation.getConfiguration();
-			System.out.println(configuration);
+			referenceImplementation.setReferenceInputData(inputData);
 			
-			Code code = companionSite.getReferenceImplementation();
-			System.out.println(code);
+			OutputData outputData = publication.launch(login, password, Publication.LaunchMode.Test);
+
+			publication.publish(Publication.Type.PublishedPaper);
 			
-			if(referenceImplementation.equals(code)){
-				System.out.println("les deux codes sont égaux");
-			} else{
-				System.out.println("probleme car les 2 codes sont différentes");
-			}
-			
-			Publication publication2 = code.getPublication();
-			
-			if(publication2.equals(publication)){
-				System.out.println("les deux publis sont égales");
-			} else{
-				System.out.println("probleme car les 2 publis sont différentes");
-			}
-			
-			InputData inputData = code.getReferenceInputData();
-			System.out.println(inputData);
-			
-			Program program = new Program();
-			program.setCode(code);
-			program.addInputDate(inputData);
-			program.execute();
-			
-			ThematicSite thematicSite = new ThematicSite();
-			thematicSite.addProgram(program);
-			
-			thematicSite.execute();
-			
+		}catch(UnsupportedConfigurationException e){
+			e.printStackTrace();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		
 		
-		/*Code code = publi.getCode();
-
-		query = new Query("CompanionSite");
-		query.addFilter("lastName", Query.FilterOperator.EQUAL, "Tintin");
-		List<Author> list = ExecShare.prepare(q);*/
-		
-		
-		/*ThematicSite thematicSite = new ThematicSite();
-		
-		Sites sites = new Sites();
-		
-		List<CompanionSite> list = sites.find("select site from Site site where site.author = 'Mr X'");
-		
-		Code code = site.getCode();
-		InputData inputData = site.getDemoData();
-		
-		Program program = new Program();
-		program.setCode(code);
-		program.addInputDate(inputData);
-		
-		thematicSite.addProgram(program);
-		
-		site = sites.find("select site from Site site where site.creationDate < = 'Mr X'");
-		
-		Code code = site.getCode();
-		InputData inputData = site.getDemoData();
-		
-		Program program = new Program();
-		program.setCode(code);
-		program.addInputDate(inputData);
-		
-		thematicSite.addProgram(program);
-		
-		
-		File file = new File("input.data");
-		
-		input.exportTo(file);
-		
-		
-		Program program = new Program();
-		thematicSite.addProgram(program );
-		
-		ExecShare execShare = new ExecShare();
-		
-		Authentication authentication = new Authentication("temporary", "temporary", "appli_ID_1");
-		
-		Response<Sites> response1 = execShare.retreive("http://localhost:8081/Data/sites", authentication, Sites.class);
-		ResponseStatus status = response1.getStatus();
-		if(status == ResponseStatus.ERROR){
-			System.exit(0);
-		}
-		
-		Sites sites = response1.getBody();
-		List<ResourceLink> links = sites.getResourceLinks();
-		ResourceLink linkToSite = links.get(0);
-		String siteHref = linkToSite.getHref();
-		String siteRelation = linkToSite.getRelation();
-		
-		Response<Site> response2 = execShare.retreive(siteHref, authentication, Site.class);
-		status = response2.getStatus();
-		if(status == ResponseStatus.ERROR){
-			System.exit(0);
-		}
-		
-		Site site = response2.getBody();
-		
-		List<ResourceLink> siteLinks = site.getResourceLinks();
-		ResourceLink resourceLink = null;
-		int i=0;
-		while(i<siteLinks.size() && (resourceLink=siteLinks.get(i)).getRelation().equals("code")==false){
-			i++;
-		}
-		
-		if(resourceLink == null){
-			System.exit(0);
-		}
-		
-		String codeHref = resourceLink.getHref();
-		
-		Response<Code> response3 = execShare.retreive(codeHref, authentication, Code.class);
-		status = response3.getStatus();
-		if(status == ResponseStatus.ERROR){
-			System.exit(0);
-		}
-		
-		Code code = response3.getBody();
-		
-		Program program = new Program();
-		program.setCode(code);
-		
-		resourceLink = null;
-		i=0;
-		while(i<siteLinks.size() && (resourceLink=siteLinks.get(i)).getRelation().equals("inputData")==false){
-			i++;
-		}
-		
-		if(resourceLink == null){
-			System.exit(0);
-		}
-		
-		String inputDataHref = resourceLink.getHref();
-		
-		Response<InputData> response4 = execShare.retreive(inputDataHref, authentication, InputData.class);
-		status = response3.getStatus();
-		if(status == ResponseStatus.ERROR){
-			System.exit(0);
-		}
-		InputData inputData = response4.getBody();
-		
-		program.addInputDate(inputData);
-		
-		ThematicSite execution = new ThematicSite();
-		execution.addProgram(program);
-		
-		execShare.run(authentication, execution);*/
-		
-/*    	RestTemplate restTemplate = new RestTemplate();
-    	HttpHeaders headers = new HttpHeaders();
-    	headers.setContentType(MediaType.APPLICATION_JSON);
-    	String auth = "temporary" + ":" + "temporary";
-    	
-    	byte[] encodedAuthorisation = Base64.encode(auth.getBytes());
-        headers.add("Authorization", "Basic " + new String(encodedAuthorisation));
-    	
-        HttpEntity<String> entity = new HttpEntity<String>(headers);
-    	ResponseEntity<Sites> response = restTemplate.exchange("http://localhost:8081/Data/sites", HttpMethod.GET, entity, Sites.class);
-    	Sites sites = response.getBody();
-    	
-    	System.out.println("sites=" + sites);
-    	
-    	HttpEntity<String> entity1 = new HttpEntity<String>(headers);
-    	ResponseEntity<Site> response1 = restTemplate.exchange("http://localhost:8081/Data/sites/1", HttpMethod.GET, entity, Site.class);
-    	Site site = response1.getBody();
-    	
-    	System.out.println("site=" + site);*/
 	}
 
 }

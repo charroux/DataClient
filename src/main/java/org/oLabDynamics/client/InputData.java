@@ -1,6 +1,7 @@
 package org.oLabDynamics.client;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 import org.springframework.hateoas.Link;
 import org.oLabDynamics.rest.ResourceSupport;
@@ -20,11 +21,14 @@ public class InputData extends ResourceSupport {
 	HttpEntity<String> entity;
 	
 	public InputData(){
-		restTemplate = new RestTemplate();
+		ExecShare execShare = ExecShare.getInstance();
+		restTemplate = execShare.getRestTemplate();
     	HttpHeaders headers = new HttpHeaders();
     	headers.setContentType(MediaType.APPLICATION_JSON);
-    	String auth = "temporary" + ":" + "temporary";
     	
+    	ExecShareConnexionFactory connexionFactory = execShare.getExecShareConnexionFactory();
+    	String auth = connexionFactory.getUserName() + ":" + connexionFactory.getPassword();
+
     	byte[] encodedAuthorisation = Base64.encode(auth.getBytes());
         headers.add("Authorization", "Basic " + new String(encodedAuthorisation));
         
@@ -37,6 +41,10 @@ public class InputData extends ResourceSupport {
 		String currentMethodName = currentMethod.getName();
 		String attributeName = currentMethodName.substring(3, 4).toLowerCase() + currentMethodName.substring(4);
 		Link link = super.getLink(attributeName);
+		if(link == null){
+			return null;
+		}
+		
 		String href = link.getHref();
 		
 		ResponseEntity<Code> response = restTemplate.exchange(href, HttpMethod.GET, entity, Code.class);

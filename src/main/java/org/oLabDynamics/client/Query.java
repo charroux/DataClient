@@ -15,7 +15,8 @@ public class Query {
 	public enum FilterOperator{
 		EQUAL,
 		LESS_THAN,
-		GREATER_THAN
+		GREATER_THAN, 
+		CONTAIN
 	}
 
 	private String rel;
@@ -57,6 +58,9 @@ public class Query {
 				break;
 			case GREATER_THAN:
 				formatedFilters += ">" + filter.value;
+				break;
+			case CONTAIN:
+				formatedFilters += "<>" + filter.value;
 				break;
 			}
 			if(attributs.hasMoreElements()){

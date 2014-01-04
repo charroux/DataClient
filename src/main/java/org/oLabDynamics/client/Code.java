@@ -1,9 +1,12 @@
 package org.oLabDynamics.client;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Link;
 import org.oLabDynamics.rest.ResourceSupport;
 import org.springframework.http.HttpEntity;
@@ -22,11 +25,14 @@ public class Code extends ResourceSupport {
 	HttpEntity<String> entity;
 	
 	public Code(){
-		restTemplate = new RestTemplate();
+		ExecShare execShare = ExecShare.getInstance();
+		restTemplate = execShare.getRestTemplate();
     	HttpHeaders headers = new HttpHeaders();
     	headers.setContentType(MediaType.APPLICATION_JSON);
-    	String auth = "temporary" + ":" + "temporary";
     	
+    	ExecShareConnexionFactory connexionFactory = execShare.getExecShareConnexionFactory();
+    	String auth = connexionFactory.getUserName() + ":" + connexionFactory.getPassword();
+
     	byte[] encodedAuthorisation = Base64.encode(auth.getBytes());
         headers.add("Authorization", "Basic " + new String(encodedAuthorisation));
         
@@ -40,6 +46,10 @@ public class Code extends ResourceSupport {
 		String attributeName = currentMethodName.substring(3, 4).toLowerCase() + currentMethodName.substring(4);
 		
 		Link link = super.getLink(attributeName);
+		if(link == null){
+			return null;
+		}
+		
 		String href = link.getHref();
 
 		ResponseEntity<CompanionSite> response = restTemplate.exchange(href, HttpMethod.GET, entity, CompanionSite.class);
@@ -58,6 +68,10 @@ public class Code extends ResourceSupport {
 		String attributeName = currentMethodName.substring(3, 4).toLowerCase() + currentMethodName.substring(4);
 		
 		Link link = super.getLink(attributeName);
+		if(link == null){
+			return null;
+		}
+		
 		String href = link.getHref();
 
 		ResponseEntity<InputData> response = restTemplate.exchange(href, HttpMethod.GET, entity, InputData.class);
@@ -72,11 +86,18 @@ public class Code extends ResourceSupport {
 		String attributeName = currentMethodName.substring(3, 4).toLowerCase() + currentMethodName.substring(4);
 		
 		Link link = super.getLink(attributeName);
+		if(link == null){
+			return null;
+		}
 		String href = link.getHref();
 
 		ResponseEntity<Publication> response = restTemplate.exchange(href, HttpMethod.GET, entity, Publication.class);
     	
 		return response.getBody();
+	}
+
+	void setPublication(Publication publication) {
+		...
 	}
 	
 	public String getDescription() {
@@ -87,6 +108,48 @@ public class Code extends ResourceSupport {
 		this.description = description;
 	}
 
+	public void export(File file) {
+		// TODO Auto-generated method stub	
+	}
+
+	public Set<Configuration> getConfigurations() {
+		class Local {};
+		Method currentMethod = Local.class.getEnclosingMethod();
+		String currentMethodName = currentMethod.getName();
+		String attributeName = currentMethodName.substring(3, 4).toLowerCase() + currentMethodName.substring(4);
+		
+		Link link = super.getLink(attributeName);
+		if(link == null){
+			return null;
+		}
+		String href = link.getHref();
+		
+		ParameterizedTypeReference<Set<Configuration>> typeRef = new ParameterizedTypeReference<Set<Configuration>>() {};
+		ResponseEntity<Set<Configuration>> response = restTemplate.exchange(href, HttpMethod.GET, entity, typeRef);
+
+		return response.getBody();
+	}
+	
+	public Set<Configuration> getConfigurations(Class operatingSystem) {
+		class Local {};
+		Method currentMethod = Local.class.getEnclosingMethod();
+		String currentMethodName = currentMethod.getName();
+		String attributeName = currentMethodName.substring(3, 4).toLowerCase() + currentMethodName.substring(4);
+		
+		Link link = super.getLink(attributeName);
+		if(link == null){
+			return null;
+		}
+		String href = link.getHref();
+		
+		href = href + "?operatingSystemName=" + operatingSystem.getName();
+		
+		ParameterizedTypeReference<Set<Configuration>> typeRef = new ParameterizedTypeReference<Set<Configuration>>() {};
+		ResponseEntity<Set<Configuration>> response = restTemplate.exchange(href, HttpMethod.GET, entity, typeRef);
+
+		return response.getBody();
+	}
+	
 	@Override
 	public String toString() {
 		return "Code [description=" + description + ", toString()="
@@ -118,6 +181,14 @@ public class Code extends ResourceSupport {
 			return false;
 		return true;
 	}
+
+
+
+
+
+
+
+
 
 
 	

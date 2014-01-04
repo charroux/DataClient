@@ -8,6 +8,7 @@ import org.oLabDynamics.client.Author;
 import org.oLabDynamics.client.Code;
 import org.oLabDynamics.client.CompanionSite;
 import org.oLabDynamics.client.ExecShare;
+import org.oLabDynamics.client.ExecShareConnexionFactory;
 import org.oLabDynamics.client.InputData;
 import org.oLabDynamics.client.Program;
 import org.oLabDynamics.client.Publication;
@@ -34,8 +35,20 @@ public class MainBenchmarking {
 		
 		try{
 
-			ExecShare execShare = new ExecShare();
+			//ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
 			
+			//RestTemplate restTemplate = (RestTemplate) context.getBean("restTemplate");
+			
+			//ExecShareConnexionFactory execShareConnexionFactory =(ExecShareConnexionFactory)context.getBean("execShare");
+			
+			//System.exit(0);
+			
+			//ExecShare execShare = new ExecShare();
+			//ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+			//ExecShare execShare = (ExecShare)context.getBean("execShare");
+			
+			ExecShare execShare = ExecShare.getInstance();
+					
 			Query query = new Query("author");
 			query.addFilter("name", Query.FilterOperator.EQUAL, "Tintin");
 			List<Author> authors = execShare.prepare(query);
