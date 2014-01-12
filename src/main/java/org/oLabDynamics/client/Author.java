@@ -39,12 +39,6 @@ public class Author extends ResourceSupport {
         entity = new HttpEntity<String>(headers);
 	}
 
-	public Author(String firstName, String lastName) {
-		this();
-		this.firstName = firstName;
-		this.lastName = lastName;
-	}
-
 	public String getFirstName() {
 		return firstName;
 	}
@@ -59,15 +53,6 @@ public class Author extends ResourceSupport {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
-	}
-
-
-	void addPublication(Publication publication) {
-		...
-	}
-
-	void removePublication(Publication publication) {
-		...
 	}
 
 	public List<Publication> getPublications() {

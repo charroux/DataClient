@@ -96,10 +96,6 @@ public class Code extends ResourceSupport {
 		return response.getBody();
 	}
 
-	void setPublication(Publication publication) {
-		...
-	}
-	
 	public String getDescription() {
 		return description;
 	}
@@ -183,14 +179,4 @@ public class Code extends ResourceSupport {
 	}
 
 
-
-
-
-
-
-
-
-
-	
-	
 }

@@ -3,7 +3,6 @@ package org.oLabDynamics.client;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.oLabDynamics.UnsupportedConfigurationException;
 import org.oLabDynamics.rest.ResourceSupport;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.client.RestTemplate;
@@ -20,12 +19,8 @@ public class Configuration extends ResourceSupport {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Configuration(String programmingLanguage) {
-		this.programmingLanguage = programmingLanguage;
-	}
-
 	public OperatingSystem getOperatingSystem() {
-		return ...;
+		return null;
 	}
 
 	public String getProgrammingLanguage() {
@@ -37,7 +32,7 @@ public class Configuration extends ResourceSupport {
 	}
 
 	public Set<Library> getLibraries() {
-		return ...;
+		return null;
 	}
 
 	public void installOnThisMachine() throws UnsupportedConfigurationException{

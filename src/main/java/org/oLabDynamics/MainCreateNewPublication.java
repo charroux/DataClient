@@ -41,7 +41,7 @@ public class MainCreateNewPublication {
 			
 			Publication publication = new Publication("Un nouvel algorithme", Publication.Type.WorkingPaper);
 			
-			List<Author> authors = new ArrayList<Author>();
+	/*		List<Author> authors = new ArrayList<Author>();
 			
 			Author author = new Author("Christophe", "Marchand");
 			authors.add(author);
@@ -49,14 +49,11 @@ public class MainCreateNewPublication {
 			author = new Author("Paul", "Durand");
 			authors.add(author);
 			
-			publication.setAuthors(authors);
+			publication.setAuthors(authors);*/
 			
-			String login = "myLogin";
-			String password = "myPassword";
+			publication.publishPublication(Publication.PublicationMode.ForContactsOnly);
 			
-			publication.publish(Publication.PublicationMode.ForContactsOnly);
-			
-			File code = new File("MonCode.mat");
+/*			File code = new File("MonCode.mat");
 			Code referenceImplementation = new Code(code);
 			
 			Configuration configuration;
@@ -67,6 +64,7 @@ public class MainCreateNewPublication {
 			query.addFilter("version", Query.FilterOperator.EQUAL, "2.3");
 			query.addFilter("programmingLanguage", Query.FilterOperator.EQUAL, "Matlab");
 			query.addFilter("libraries", Query.FilterOperator.CONTAIN, "Toolbox1", "Toobox2");
+			
 			List<Configuration> configurations = execShare.prepare(query);
 			if(configurations.size() == 0){	// configuration demandée inexistante => demande crétion nouvelle configuration
 			
@@ -92,11 +90,11 @@ public class MainCreateNewPublication {
 			
 			OutputData outputData = publication.launch(login, password, Publication.LaunchMode.Test);
 
-			publication.publish(Publication.Type.PublishedPaper);
+			publication.publishPublication(Publication.Type.PublishedPaper);
 			
 		}catch(UnsupportedConfigurationException e){
 			e.printStackTrace();
-		}catch(Exception e){
+		*/}catch(Exception e){
 			e.printStackTrace();
 		}
 		

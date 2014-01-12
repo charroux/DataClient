@@ -3,11 +3,11 @@ package org.oLabDynamics.client;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Link;
-import org.oLabDynamics.client.Publication.PublicationMode;
 import org.oLabDynamics.rest.ResourceSupport;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -20,30 +20,11 @@ import org.springframework.web.client.RestTemplate;
 
 public class Publication extends ResourceSupport {
 	
-	public enum Type{
-		WorkingPaper,
-		PublishedPaper
-	}
-
-	public enum PublicationMode{
-		ForContactsOnly
-	}
-	
-	Type type;
-	
 	String title;
-	List<Author> authors = new ArrayList<Author>();
-	List<Author> removedAuthors = new ArrayList<Author>();	// maintient a jour la liste des auteurs supprimées pour ne pas les obtenir à nouveau quand on demande au serveur la liste
-	
+
 	RestTemplate restTemplate;
 	HttpEntity<String> entity;
 
-	private boolean resetAuthors;	// true si la liste des auteurs a été réinitilisée (il ne faut plus tenir compte de celle du serveur)
-
-	private boolean resetReferenceImplementation;
-
-	private Code referenceImplementation;
-	
 	public Publication(){
 		ExecShare execShare = ExecShare.getInstance();
 		restTemplate = execShare.getRestTemplate();
@@ -59,14 +40,6 @@ public class Publication extends ResourceSupport {
         entity = new HttpEntity<String>(headers);
 	}
 	
-	public Publication(String title, Type type) {
-		this();
-		this.title = title;
-		this.type = type;
-	}
-
-
-
 	public void setTitle(String title) {
 		this.title = title;
 	}
@@ -77,74 +50,30 @@ public class Publication extends ResourceSupport {
 	
 	/**
 	 * 
-	 * @param author
-	 * @param authorOrdering begin at 1
-	 */
-	public boolean addAuthor(Author author, int authorOrdering){
-		if(authors.contains(author) == false){
-			authors = this.getAuthors();	// récupère la liste pour pouvoir placer l'auteur à sa place (possible récupération de la liste venant du serveur)
-			authors.add(authorOrdering-1, author);
-			author.addPublication(this);
-			return true;
-		}
-		return false;
-	}
-	
-	public boolean removeAuthor(Author author){
-		boolean removed = authors.remove(author);
-		if(removed == true){
-			removedAuthors.add(author);
-			author.removePublication(this);
-		}
-		return removed;
-	}
-	
-	/**
-	 * 
 	 * @return all authors: those present at the server (if they exist and if they do not have been removed by {@link #removeAuthor removeAuthor}) 
 	 * plus all added authors with {@link #addAuthor addAuthor}.
 	 * Notice that {@link #setAuthors setAuthors} resets the entire list so that the list is no more gotten from the server.
 	 */
 	public List<Author> getAuthors(){
-		if(resetAuthors == false){	// la liste des auteurs n'a pas été réinitialisée, on peut prendre celle du serveur
-			class Local {};
-			Method currentMethod = Local.class.getEnclosingMethod();
-			String currentMethodName = currentMethod.getName();
-			String attributeName = currentMethodName.substring(3, 4).toLowerCase() + currentMethodName.substring(4);
-			Link link = super.getLink(attributeName);
-			if(link == null){		// L'héritage de ResourceSupport n'a pas été initialisé par Jackson ou manuellement
-				return authors;
-			}
-			
-			String href = link.getHref();
-			
-			ParameterizedTypeReference<List<Author>> typeRef = new ParameterizedTypeReference<List<Author>>() {};
-			ResponseEntity<List<Author>> response = restTemplate.exchange(href, HttpMethod.GET, entity, typeRef);
-			HttpStatus status = response.getStatusCode();
-			if(status == HttpStatus.OK){
-				List<Author> authorsFromTheServer = response.getBody();
-				authorsFromTheServer.removeAll(removedAuthors);
-				authors.addAll(authorsFromTheServer);
-			} else {
-				throw new ServerException();
-			}
+		class Local {};
+		Method currentMethod = Local.class.getEnclosingMethod();
+		String currentMethodName = currentMethod.getName();
+		String attributeName = currentMethodName.substring(3, 4).toLowerCase() + currentMethodName.substring(4);
+		Link link = super.getLink(attributeName);
+		if(link == null){		// L'héritage de ResourceSupport n'a pas été initialisé par Jackson ou manuellement
+			return null;
 		}
-		return authors;
-	}
-
-
-	/**
-	 * Replace all the authors, the given list should be ordered before calling this method if authors ordering is important. 
-	 * Notice that it resets the entire list so that the list is no more gotten from the server.
-	 * @param authors
-	 */
-	public void setAuthors(List<Author> authors) {
-		this.authors = authors;
-		int i=0;
-		while(i < authors.size()){
-			authors.get(i).addPublication(this);
+		
+		String href = link.getHref();
+		
+		ParameterizedTypeReference<List<Author>> typeRef = new ParameterizedTypeReference<List<Author>>() {};
+		ResponseEntity<List<Author>> response = restTemplate.exchange(href, HttpMethod.GET, entity, typeRef);
+		HttpStatus status = response.getStatusCode();
+		if(status == HttpStatus.OK){
+			return response.getBody();
+		} else {
+			throw new ServerException();
 		}
-		resetAuthors = true;	// la liste des auteurs a été réinitilisée (il ne faut plus tenir compte de celle du serveur)
 	}
 	
 	public CompanionSite getCompanionSite(){
@@ -170,45 +99,25 @@ public class Publication extends ResourceSupport {
 	 * @return the reference implementation (from the server or a new implementation if {@link #setReferenceImplementation setReferenceImplementation} has been used 
 	 */
 	public Code getReferenceImplementation(){
-		if(resetReferenceImplementation == false){
-			class Local {};
-			Method currentMethod = Local.class.getEnclosingMethod();
-			String currentMethodName = currentMethod.getName();
-			String attributeName = currentMethodName.substring(3, 4).toLowerCase() + currentMethodName.substring(4);
-			
-			Link link = super.getLink(attributeName);
-			if(link == null){
-				return null;
-			}
-			
-			String href = link.getHref();
-
-			ResponseEntity<Code> response = restTemplate.exchange(href, HttpMethod.GET, entity, Code.class);
-	    	
-			referenceImplementation =  response.getBody();
-		}
-		return referenceImplementation;
-	}
-
-	public void setReferenceImplementation(Code referenceImplementation) {
-		resetReferenceImplementation = true;
-		this.referenceImplementation = referenceImplementation;
-		referenceImplementation.setPublication(this);
-	}
-
-	public void publish(PublicationMode publicationMode) {
-		Link link = super.getLink("self");
+		class Local {};
+		Method currentMethod = Local.class.getEnclosingMethod();
+		String currentMethodName = currentMethod.getName();
+		String attributeName = currentMethodName.substring(3, 4).toLowerCase() + currentMethodName.substring(4);
+		
+		Link link = super.getLink(attributeName);
 		if(link == null){
-			restTemplate.exchange(href, HttpMethod.POST, entity, Code.class);
-		} else {
-			String href = link.getHref();
+			return null;
 		}
 		
+		String href = link.getHref();
+			ResponseEntity<Code> response = restTemplate.exchange(href, HttpMethod.GET, entity, Code.class);
+    	
+		return response.getBody();
 	}
-	
+
 	@Override
 	public String toString() {
-		return "Publication [type=" + type + ", title=" + title + "]";
+		return "Publication [title=" + title + "]";
 	}
 
 	@Override
@@ -216,7 +125,6 @@ public class Publication extends ResourceSupport {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
 
@@ -234,17 +142,8 @@ public class Publication extends ResourceSupport {
 				return false;
 		} else if (!title.equals(other.title))
 			return false;
-		if (type != other.type)
-			return false;
 		return true;
 	}
-
-
-
-
-
-
-
 
 	
 }
