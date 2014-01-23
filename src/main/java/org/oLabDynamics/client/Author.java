@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Link;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.oLabDynamics.rest.ResourceSupport;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -18,7 +19,9 @@ import org.springframework.security.crypto.codec.Base64;
 
 public class Author extends ResourceSupport {
 	
+	@JsonIgnore
 	RestTemplate restTemplate;
+	@JsonIgnore
 	HttpEntity<String> entity;
 	
 	String firstName;

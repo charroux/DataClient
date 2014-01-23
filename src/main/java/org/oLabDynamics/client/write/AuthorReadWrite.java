@@ -7,7 +7,10 @@ import java.util.List;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Link;
+import org.codehaus.jackson.annotate.JsonBackReference;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.oLabDynamics.client.Author;
+import org.oLabDynamics.client.Publication;
 import org.oLabDynamics.rest.ResourceSupport;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,6 +22,8 @@ import org.springframework.security.crypto.codec.Base64;
 
 public class AuthorReadWrite extends Author {
 
+	@JsonIgnore
+	private List<Publication> publications = null;
 	
 	public AuthorReadWrite(){
 		super();
@@ -26,23 +31,75 @@ public class AuthorReadWrite extends Author {
 
 	public AuthorReadWrite(String firstName, String lastName) {
 		this();
+		super.setFirstName(firstName);
+		super.setLastName(lastName);
+	}
+	
+	
+/*	
+	public void setPublications(List<Publication> publications) {
+		this.publications = publications;
+	}*/
+
+	@Override
+	public List<Publication> getPublications(){
+		if(publications == null){	// la liste des publications n'a pas été réinitialisée, on peut prendre celle du serveur
+			List<Publication> publicationsFromTheServer = super.getPublications();
+			if(publicationsFromTheServer == null){
+				return publications = new ArrayList<Publication>();
+			} else {
+				return publications = publicationsFromTheServer;
+			}
+		}
+		return publications;
 	}
 
 	void addPublication(PublicationReadWrite publication) {
-		
+		if(publications == null){	// la liste des publications n'a pas été réinitialisée, on peut prendre celle du serveur
+			publications = this.getPublications();
+		}
+		this.publications.add(publication);
 	}
 
-	void removePublication(PublicationReadWrite publication) {
-		
+	/*boolean removePublication(PublicationReadWrite publication) {
+		if(publications == null){	// la liste des publications n'a pas été réinitialisée, on peut prendre celle du serveur
+			publications = this.getPublications();
+		}
+		return publications.remove(publication);
+	}*/
+
+/*	@Override
+	public String toString() {
+		return "AuthorReadWrite [publications=" + publications
+				+ ", toString()=" + super.toString() + "]";
+	}*/
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ ((publications == null) ? 0 : publications.hashCode());
+		return result;
 	}
 
 	@Override
-	public String toString() {
-		return "AuthorReadWrite [toString()=" + super.toString() + "]";
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AuthorReadWrite other = (AuthorReadWrite) obj;
+		if (publications == null) {
+			if (other.publications != null)
+				return false;
+		} else if (!publications.equals(other.publications))
+			return false;
+		return true;
 	}
 
-	
-	
 	
 
 }

@@ -8,7 +8,12 @@ import java.util.Set;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Link;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.oLabDynamics.client.Code;
+import org.oLabDynamics.client.CompanionSite;
+import org.oLabDynamics.client.Configuration;
+import org.oLabDynamics.client.InputData;
+import org.oLabDynamics.client.Publication;
 import org.oLabDynamics.rest.ResourceSupport;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -20,19 +25,61 @@ import org.springframework.web.client.RestTemplate;
 
 public class CodeReadWrite extends Code {
 	
+	@JsonIgnore
+	Publication publication;
+	
+	@JsonIgnore
+	CompanionSite companionSite;
+	
+	@JsonIgnore
+	InputData referenceInputData;
+	
+	@JsonIgnore
+	List<InputData> inputs;
+	
+	@JsonIgnore
+	Set<Configuration> configurations;
+	
 	public CodeReadWrite(){
 		super();
 	}
 
-	void setPublication(PublicationReadWrite publication) {
-		
+	public CodeReadWrite(String description) {
+		super();
+		super.setDescription(description);
 	}
 
-	@Override
-	public String toString() {
-		return "CodeReadWrite [toString()=" + super.toString() + "]";
+	void setPublication(PublicationReadWrite publication) {
+		this.publication = publication;
 	}
 	
+	@Override
+	public Publication getPublication() {
+		if(publication == null){
+			publication = super.getPublication();
+		}
+		return publication;
+	}
+	
+	@Override
+	public CompanionSite getCompanionSite(){
+		if(companionSite == null){
+			companionSite = super.getCompanionSite();
+		}
+		return companionSite;
+	}
+
+	void setCompanionSite(CompanionSiteReadWrite companionSite) {
+		this.companionSite = companionSite;
+	}
+	
+	
+
+/*	@Override
+	public String toString() {
+		return "CodeReadWrite [publication=" + publication + ", toString()="
+				+ super.toString() + "]";
+	}*/
 
 	
 	

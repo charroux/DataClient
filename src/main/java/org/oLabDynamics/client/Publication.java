@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Link;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.oLabDynamics.rest.ResourceSupport;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -20,9 +21,17 @@ import org.springframework.web.client.RestTemplate;
 
 public class Publication extends ResourceSupport {
 	
+	public enum PublicationType{
+		ARTICLE,
+		WORKING_PAPER
+	}
+	
+	PublicationType publicationType;
 	String title;
 
+	@JsonIgnore
 	RestTemplate restTemplate;
+	@JsonIgnore
 	HttpEntity<String> entity;
 
 	public Publication(){
@@ -115,15 +124,26 @@ public class Publication extends ResourceSupport {
 		return response.getBody();
 	}
 
+	public PublicationType getPublicationType() {
+		return publicationType;
+	}
+
+	public void setPublicationType(PublicationType publicationType) {
+		this.publicationType = publicationType;
+	}
+
 	@Override
 	public String toString() {
-		return "Publication [title=" + title + "]";
+		return "Publication [publicationType=" + publicationType + ", title="
+				+ title + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
+		result = prime * result
+				+ ((publicationType == null) ? 0 : publicationType.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
 		return result;
 	}
@@ -137,6 +157,8 @@ public class Publication extends ResourceSupport {
 		if (getClass() != obj.getClass())
 			return false;
 		Publication other = (Publication) obj;
+		if (publicationType != other.publicationType)
+			return false;
 		if (title == null) {
 			if (other.title != null)
 				return false;
@@ -144,6 +166,8 @@ public class Publication extends ResourceSupport {
 			return false;
 		return true;
 	}
+
+	
 
 	
 }

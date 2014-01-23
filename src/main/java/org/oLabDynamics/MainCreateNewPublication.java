@@ -17,6 +17,7 @@ import org.oLabDynamics.client.Program;
 import org.oLabDynamics.client.Publication;
 import org.oLabDynamics.client.Query;
 import org.oLabDynamics.client.Query.FilterOperator;
+import org.oLabDynamics.client.write.PublicationReadWrite;
 import org.oLabDynamics.client.ThematicSite;
 import org.oLabDynamics.client.UnsupportedConfigurationException;
 import org.springframework.context.ApplicationContext;
@@ -39,7 +40,8 @@ public class MainCreateNewPublication {
 		
 		try{
 			
-			Publication publication = new Publication("Un nouvel algorithme", Publication.Type.WorkingPaper);
+			//PublicationReadWrite publication = new PublicationReadWrite("Un nouvel algorithme", PublicationReadWrite.Type.WorkingPaper);
+			PublicationReadWrite publication = new PublicationReadWrite();
 			
 	/*		List<Author> authors = new ArrayList<Author>();
 			
@@ -51,7 +53,8 @@ public class MainCreateNewPublication {
 			
 			publication.setAuthors(authors);*/
 			
-			publication.publishPublication(Publication.PublicationMode.ForContactsOnly);
+			//publication.publishPublication(PublicationReadWrite.PublicationMode.ForContactsOnly);
+			publication.publishPublication();
 			
 /*			File code = new File("MonCode.mat");
 			Code referenceImplementation = new Code(code);

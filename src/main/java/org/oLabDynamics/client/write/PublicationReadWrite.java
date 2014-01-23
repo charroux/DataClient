@@ -8,8 +8,11 @@ import java.util.List;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Link;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonManagedReference;
 import org.oLabDynamics.client.Author;
 import org.oLabDynamics.client.Code;
+import org.oLabDynamics.client.CompanionSite;
 import org.oLabDynamics.client.ExecShare;
 import org.oLabDynamics.client.ExecShareConnexionFactory;
 import org.oLabDynamics.client.Publication;
@@ -25,7 +28,7 @@ import org.springframework.web.client.RestTemplate;
 
 public class PublicationReadWrite extends Publication {
 	
-	public enum Type{
+/*	public enum Type{
 		WorkingPaper,
 		PublishedPaper
 	}
@@ -34,76 +37,85 @@ public class PublicationReadWrite extends Publication {
 		ForContactsOnly
 	}
 	
-	Type type;
+	@JsonIgnore
+	Type type;*/
+
+	//@JsonManagedReference
+	private List<Author> authors = null;
 	
-	String title;
-	List<Author> authors = new ArrayList<Author>();
-	List<AuthorReadWrite> removedAuthors = new ArrayList<AuthorReadWrite>();	// maintient a jour la liste des auteurs supprimées pour ne pas les obtenir à nouveau quand on demande au serveur la liste
-
-	private boolean resetAuthors;	// true si la liste des auteurs a été réinitilisée (il ne faut plus tenir compte de celle du serveur)
-
-	private boolean resetReferenceImplementation;
-
-	private Code referenceImplementation;
+	private Code referenceImplementation = null;
+	
+	//@JsonManagedReference
+	private CompanionSite companionSite = null;
 	
 	public PublicationReadWrite(){
 		super();
 	}
 	
-	public PublicationReadWrite(String title, Type type) {
+	public PublicationReadWrite(String title) {
 		super();
-		this.title = title;
-		this.type = type;
-	}
-	
-	public void setTitle(String title) {
-		this.title = title;
+		super.setTitle(title);
 	}
 
-	public String getTitle() {
-		return title;
-	}
+/*	public PublicationReadWrite(String title, Type type) {
+		super();
+		super.setTitle(title);
+		//this.type = type;
+	}  */
 	
+	
+/*	public Type getType() {
+		return type;
+	}
+
+	public void setType(Type type) {
+		this.type = type;
+	}*/
+/*
+	public void setCompanionSite(CompanionSite companionSite) {
+		//this.companionSite = companionSite;
+	}
+*/
 	/**
 	 * 
 	 * @param author
 	 * @param authorOrdering begin at 1
 	 */
 	public boolean addAuthor(AuthorReadWrite author, int authorOrdering){
+		if(authors == null){
+			authors = this.getAuthors();	// try to get authors form the server
+		}
 		if(authors.contains(author) == false){
-			authors = super.getAuthors();	// récupère la liste pour pouvoir placer l'auteur à sa place (possible récupération de la liste venant du serveur)
 			authors.add(authorOrdering-1, author);
 			author.addPublication(this);
-			
-			// "/publication/{id}/authors"	"/author/{id}/publications"
 			return true;
 		}
 		return false;
 	}
 	
 	public boolean removeAuthor(AuthorReadWrite author){
-		boolean removed = authors.remove(author);
-		if(removed == true){
-			removedAuthors.add(author);
-			author.removePublication(this);
+		if(authors == null){
+			authors = this.getAuthors();	// try to get authors form the server
 		}
-		return removed;
+		return authors.remove(author);
 	}
 	
 	/**
 	 * 
-	 * @return all authors: those present at the server (if they exist and if they do not have been removed by {@link #removeAuthor removeAuthor}) 
+	 * @return all authors: first call, those present at the server  
 	 * plus all added authors with {@link #addAuthor addAuthor}.
 	 * Notice that {@link #setAuthors setAuthors} resets the entire list so that the list is no more gotten from the server.
 	 */
+	@Override
 	public List<Author> getAuthors(){
-		if(resetAuthors == false){	// la liste des auteurs n'a pas été réinitialisée, on peut prendre celle du serveur
+		if(authors == null){	// la liste des auteurs n'a pas été réinitialisée, on peut prendre celle du serveur
 			List<Author> authorsFromTheServer = super.getAuthors();
 			if(authorsFromTheServer == null){
-				return authors;
+				return authors = new ArrayList<Author>();
+			} else {
+				return authors = authorsFromTheServer;
 			}
-			authorsFromTheServer.removeAll(removedAuthors);
-			authors.addAll(authorsFromTheServer);
+
 		}
 		return authors;
 	}
@@ -120,41 +132,48 @@ public class PublicationReadWrite extends Publication {
 		while(i < authors.size()){
 			((AuthorReadWrite)authors.get(i)).addPublication(this);
 		}
-		resetAuthors = true;	// la liste des auteurs a été réinitilisée (il ne faut plus tenir compte de celle du serveur)
 	}
 	
-	public CompanionSiteReadWrite getCompanionSite(){
-		CompanionSiteReadWrite companionSite = (CompanionSiteReadWrite)super.getCompanionSite();
+	@Override
+	public CompanionSite getCompanionSite(){
+		if(companionSite == null){
+			companionSite = super.getCompanionSite();
+		}
 		return companionSite;
 	}
 	
+	public void setCompanionSite(CompanionSiteReadWrite companionSite) {
+		this.companionSite = companionSite;
+		companionSite.setPublication(this);
+	}
+
 	/**
 	 * 
 	 * @return the reference implementation (from the server or a new implementation if {@link #setReferenceImplementation setReferenceImplementation} has been used 
 	 */
+	@Override
 	public Code getReferenceImplementation(){
-		Code code = super.getReferenceImplementation();
-		return code;
+		if(referenceImplementation == null){
+			referenceImplementation = super.getReferenceImplementation();
+		}
+		System.out.println("getReferenceImplementation " + referenceImplementation);
+		return referenceImplementation;
 	}
 
 	public void setReferenceImplementation(CodeReadWrite referenceImplementation) {
-		resetReferenceImplementation = true;
 		this.referenceImplementation = referenceImplementation;
 		referenceImplementation.setPublication(this);
 	}
 
-	public void publishPublication(PublicationMode publicationMode) {
+	//public void publishPublication(PublicationMode publicationMode) {
+	public void publishPublication() {
 		class Local {};
 		Method currentMethod = Local.class.getEnclosingMethod();
 		String currentMethodName = currentMethod.getName();
 		
 		Hashtable<String, Link> relToLink = ExecShare.getRelToLink();
 		Link link = relToLink.get(currentMethodName);
-		String href = link.getHref();
-		
-		
-		
-		
+		String href = link.getHref();	
 		
 		HttpHeaders headers = new HttpHeaders();
     	headers.setContentType(MediaType.APPLICATION_JSON);
@@ -166,13 +185,29 @@ public class PublicationReadWrite extends Publication {
     	byte[] encodedAuthorisation = Base64.encode(auth.getBytes());
         headers.add("Authorization", "Basic " + new String(encodedAuthorisation));
         
-        org.oLabDynamics.model.dto1.Pub p = new org.oLabDynamics.model.dto1.Pub();
+        //PublicationReadWrite pwr = new PublicationReadWrite("blabla", PublicationReadWrite.Type.PublishedPaper);
+        PublicationReadWrite pwr = new PublicationReadWrite("bla bla");
+        
+        AuthorReadWrite arw = new AuthorReadWrite("n1", "n2");
+        pwr.addAuthor(arw, 1);
+        
+        CompanionSiteReadWrite crw = new CompanionSiteReadWrite();
+        pwr.setCompanionSite(crw);
+        
+        CodeReadWrite cwr = new CodeReadWrite("bla bla");
+        pwr.setReferenceImplementation(cwr);
+        
+        System.out.println(pwr);
+        
+        HttpEntity<PublicationReadWrite> entity = new HttpEntity<PublicationReadWrite>(pwr,headers);
+        
+       /* org.oLabDynamics.model.dto1.Pub p = new org.oLabDynamics.model.dto1.Pub();
         p.setTitle("blabla");
         org.oLabDynamics.model.dto1.Author a = new org.oLabDynamics.model.dto1.Author();
         p.getAuthors().add(a);
         
 		HttpEntity<org.oLabDynamics.model.dto1.Publication> entity = new HttpEntity<org.oLabDynamics.model.dto1.Publication>(p,headers);
-		
+		*/
 		//System.out.println(href);
 		
 		ResponseEntity<ResourceSupport> response = restTemplate.exchange(href, HttpMethod.POST, entity, ResourceSupport.class);
@@ -186,53 +221,24 @@ public class PublicationReadWrite extends Publication {
 		}*/
 		
 	}
-	
-	
 
 	@Override
 	public String toString() {
-		return "Publication [type=" + type + ", title=" + title + ", authors="
-				+ authors + ", removedAuthors=" + removedAuthors
-				+ ", resetAuthors=" + resetAuthors
-				+ ", resetReferenceImplementation="
-				+ resetReferenceImplementation + ", toString()="
+		return "PublicationReadWrite [authors=" + authors
+				+ ", referenceImplementation=" + referenceImplementation
+				+ ", companionSite=" + companionSite + ", toString()="
 				+ super.toString() + "]";
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((title == null) ? 0 : title.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
-		return result;
-	}
+	/*@Override
+	public String toString() {
+		return "PublicationReadWrite [type=" + type + ", authors=" + authors
+				+ ", companionSite=" + companionSite + "]";
+	}*/
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		PublicationReadWrite other = (PublicationReadWrite) obj;
-		if (title == null) {
-			if (other.title != null)
-				return false;
-		} else if (!title.equals(other.title))
-			return false;
-		if (type != other.type)
-			return false;
-		return true;
-	}
-
-
-
-
-
-
-
-
+	
+	
+	
+	
 	
 }

@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Link;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.oLabDynamics.rest.ResourceSupport;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -21,7 +22,10 @@ public class Code extends ResourceSupport {
 	
 	String description;
 	
+	@JsonIgnore
 	RestTemplate restTemplate;
+	
+	@JsonIgnore
 	HttpEntity<String> entity;
 	
 	public Code(){

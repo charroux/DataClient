@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Link;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.oLabDynamics.rest.ResourceSupport;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -26,7 +27,9 @@ import org.springframework.web.client.RestTemplate;
 
 public class CompanionSite extends ResourceSupport{
 	
+	@JsonIgnore
 	RestTemplate restTemplate;
+	@JsonIgnore
 	HttpEntity<String> entity;
 	
 	public CompanionSite(){
@@ -61,9 +64,9 @@ public class CompanionSite extends ResourceSupport{
 		return response.getBody();
 	}
 	
-	public List<Code> getCodes() {
+/*	public List<Code> getCodes() {
 		return new ArrayList<Code>();
-	}
+	}*/
 
 	@Override
 	public String toString() {
@@ -86,7 +89,6 @@ public class CompanionSite extends ResourceSupport{
     	
 		return response.getBody();
 	}
-	
 	
 	
 }

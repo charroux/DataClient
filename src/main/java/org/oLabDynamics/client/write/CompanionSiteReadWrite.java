@@ -10,7 +10,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Link;
+import org.codehaus.jackson.annotate.JsonBackReference;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.oLabDynamics.client.Code;
 import org.oLabDynamics.client.CompanionSite;
+import org.oLabDynamics.client.Publication;
 import org.oLabDynamics.rest.ResourceSupport;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -27,15 +31,74 @@ import org.springframework.web.client.RestTemplate;
 
 public class CompanionSiteReadWrite extends CompanionSite{
 	
+	@JsonIgnore
+	Publication publication = null;
+	
+	Code referenceImplementation = null;
+	
 	public CompanionSiteReadWrite(){
 		super();
 	}
+	
+	
+	
+/*	public void setPublication(Publication publication) {
+		this.publication = publication;
+	}*/
+
+
 
 	@Override
-	public String toString() {
-		return "CompanionSiteReadWrite [toString()=" + super.toString() + "]";
+	public Publication getPublication(){
+		if(publication == null){	// la liste des publications n'a pas été réinitialisée, on peut prendre celle du serveur
+			publication = super.getPublication();
+		}
+		return publication;
 	}
 
+	void setPublication(PublicationReadWrite publication) {
+		this.publication = publication;
+	}
 	
-	
+	@Override
+	public Code getReferenceImplementation() {
+		if(referenceImplementation == null){
+			referenceImplementation = super.getReferenceImplementation();
+		}
+		return referenceImplementation;
+	}
+
+	public void setReferenceImplementation(CodeReadWrite referenceImplementation) {
+		this.referenceImplementation = referenceImplementation;
+		referenceImplementation.setCompanionSite(this);
+	}
+
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ ((publication == null) ? 0 : publication.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CompanionSiteReadWrite other = (CompanionSiteReadWrite) obj;
+		if (publication == null) {
+			if (other.publication != null)
+				return false;
+		} else if (!publication.equals(other.publication))
+			return false;
+		return true;
+	}
+
 }
