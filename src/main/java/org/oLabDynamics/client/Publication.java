@@ -107,7 +107,7 @@ public class Publication extends ResourceSupport {
 	 * 
 	 * @return the reference implementation (from the server or a new implementation if {@link #setReferenceImplementation setReferenceImplementation} has been used 
 	 */
-	public Code getReferenceImplementation(){
+/*	public Code getReferenceImplementation(){
 		class Local {};
 		Method currentMethod = Local.class.getEnclosingMethod();
 		String currentMethodName = currentMethod.getName();
@@ -122,7 +122,7 @@ public class Publication extends ResourceSupport {
 			ResponseEntity<Code> response = restTemplate.exchange(href, HttpMethod.GET, entity, Code.class);
     	
 		return response.getBody();
-	}
+	}*/
 
 	public PublicationType getPublicationType() {
 		return publicationType;

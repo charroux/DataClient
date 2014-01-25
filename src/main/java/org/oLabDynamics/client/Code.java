@@ -83,7 +83,7 @@ public class Code extends ResourceSupport {
 		return response.getBody();
 	}
 
-	public Publication getPublication() {
+/*	public Publication getPublication() {
 		class Local {};
 		Method currentMethod = Local.class.getEnclosingMethod();
 		String currentMethodName = currentMethod.getName();
@@ -98,7 +98,7 @@ public class Code extends ResourceSupport {
 		ResponseEntity<Publication> response = restTemplate.exchange(href, HttpMethod.GET, entity, Publication.class);
     	
 		return response.getBody();
-	}
+	}*/
 
 	public String getDescription() {
 		return description;

@@ -63,7 +63,10 @@ public class MainBenchmarking {
 			CompanionSite companionSite = publication.getCompanionSite();
 			System.out.println(companionSite);
 			
-			Code referenceImplementation = publication.getReferenceImplementation();
+			Code referenceImplementation = companionSite.getReferenceImplementation();
+			System.out.println(referenceImplementation);
+			
+/*			Code referenceImplementation = publication.getReferenceImplementation();
 			System.out.println(referenceImplementation);
 
 			Code code = companionSite.getReferenceImplementation();
@@ -73,21 +76,21 @@ public class MainBenchmarking {
 				System.out.println("les deux codes sont égaux");
 			} else{
 				System.out.println("probleme car les 2 codes sont différentes");
-			}
+			}*/
 			
-			Publication publication2 = code.getPublication();
+/*			Publication publication2 = code.getPublication();
 			
 			if(publication2.equals(publication)){
 				System.out.println("les deux publis sont égales");
 			} else{
 				System.out.println("probleme car les 2 publis sont différentes");
-			}
+			}*/
 			
-			InputData inputData = code.getReferenceInputData();
+			InputData inputData = referenceImplementation.getReferenceInputData();
 			System.out.println(inputData);
 			
 			Program program = new Program();
-			program.setCode(code);
+			program.setCode(referenceImplementation);
 			program.addInputDate(inputData);
 			program.execute();
 			
