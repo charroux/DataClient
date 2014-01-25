@@ -62,10 +62,23 @@ public class Code extends ResourceSupport {
 	}
 	
 	public List<InputData> getInputs(){
-		return new ArrayList<InputData>();
+		class Local {};
+		Method currentMethod = Local.class.getEnclosingMethod();
+		String currentMethodName = currentMethod.getName();
+		String attributeName = currentMethodName.substring(3, 4).toLowerCase() + currentMethodName.substring(4);
+		Link link = super.getLink(attributeName);
+		if(link == null){
+			return new ArrayList<InputData>();
+		}
+		String href = link.getHref();
+		
+		ParameterizedTypeReference<List<InputData>> typeRef = new ParameterizedTypeReference<List<InputData>>() {};
+		ResponseEntity<List<InputData>> response = restTemplate.exchange(href, HttpMethod.GET, entity, typeRef);
+    	
+		return response.getBody();
 	}
 	
-	public InputData getReferenceInputData() {
+/*	public InputData getReferenceInputData() {
 		class Local {};
 		Method currentMethod = Local.class.getEnclosingMethod();
 		String currentMethodName = currentMethod.getName();
@@ -81,7 +94,7 @@ public class Code extends ResourceSupport {
 		ResponseEntity<InputData> response = restTemplate.exchange(href, HttpMethod.GET, entity, InputData.class);
     	
 		return response.getBody();
-	}
+	}*/
 
 /*	public Publication getPublication() {
 		class Local {};

@@ -76,13 +76,27 @@ public class CompanionSiteReadWrite extends CompanionSite{
 
 
 	@Override
+	public String toString() {
+		return "CompanionSiteReadWrite [referenceImplementation="
+				+ referenceImplementation + "]";
+	}
+
+
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result
 				+ ((publication == null) ? 0 : publication.hashCode());
+		result = prime
+				* result
+				+ ((referenceImplementation == null) ? 0
+						: referenceImplementation.hashCode());
 		return result;
 	}
+
+
 
 	@Override
 	public boolean equals(Object obj) {
@@ -98,7 +112,15 @@ public class CompanionSiteReadWrite extends CompanionSite{
 				return false;
 		} else if (!publication.equals(other.publication))
 			return false;
+		if (referenceImplementation == null) {
+			if (other.referenceImplementation != null)
+				return false;
+		} else if (!referenceImplementation
+				.equals(other.referenceImplementation))
+			return false;
 		return true;
 	}
+
+	
 
 }

@@ -43,7 +43,7 @@ public class PublicationReadWrite extends Publication {
 	//@JsonManagedReference
 	private List<Author> authors = null;
 	
-	private Code referenceImplementation = null;
+	//private Code referenceImplementation = null;
 	
 	//@JsonManagedReference
 	private CompanionSite companionSite = null;
@@ -151,7 +151,7 @@ public class PublicationReadWrite extends Publication {
 	 * 
 	 * @return the reference implementation (from the server or a new implementation if {@link #setReferenceImplementation setReferenceImplementation} has been used 
 	 */
-	@Override
+/*	@Override
 	public Code getReferenceImplementation(){
 		if(referenceImplementation == null){
 			referenceImplementation = super.getReferenceImplementation();
@@ -163,7 +163,7 @@ public class PublicationReadWrite extends Publication {
 	public void setReferenceImplementation(CodeReadWrite referenceImplementation) {
 		this.referenceImplementation = referenceImplementation;
 		referenceImplementation.setPublication(this);
-	}
+	}*/
 
 	//public void publishPublication(PublicationMode publicationMode) {
 	public void publishPublication() {
@@ -195,7 +195,12 @@ public class PublicationReadWrite extends Publication {
         pwr.setCompanionSite(crw);
         
         CodeReadWrite cwr = new CodeReadWrite("bla bla");
-        pwr.setReferenceImplementation(cwr);
+        crw.setReferenceImplementation(cwr);
+        
+        InputDataReadWrite irw = new InputDataReadWrite();
+        cwr.addInput(irw);
+        
+        //pwr.setReferenceImplementation(cwr);
         
         System.out.println(pwr);
         
@@ -224,11 +229,19 @@ public class PublicationReadWrite extends Publication {
 
 	@Override
 	public String toString() {
+		return "PublicationReadWrite [authors=" + authors + ", companionSite="
+				+ companionSite + "]";
+	}
+	
+	
+
+/*	@Override
+	public String toString() {
 		return "PublicationReadWrite [authors=" + authors
 				+ ", referenceImplementation=" + referenceImplementation
 				+ ", companionSite=" + companionSite + ", toString()="
 				+ super.toString() + "]";
-	}
+	}*/
 
 	/*@Override
 	public String toString() {

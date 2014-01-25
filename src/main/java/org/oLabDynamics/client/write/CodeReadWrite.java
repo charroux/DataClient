@@ -25,8 +25,8 @@ import org.springframework.web.client.RestTemplate;
 
 public class CodeReadWrite extends Code {
 	
-	@JsonIgnore
-	Publication publication;
+	//@JsonIgnore
+	//Publication publication;
 	
 	@JsonIgnore
 	CompanionSite companionSite;
@@ -34,7 +34,6 @@ public class CodeReadWrite extends Code {
 	@JsonIgnore
 	InputData referenceInputData;
 	
-	@JsonIgnore
 	List<InputData> inputs;
 	
 	@JsonIgnore
@@ -49,7 +48,7 @@ public class CodeReadWrite extends Code {
 		super.setDescription(description);
 	}
 
-	void setPublication(PublicationReadWrite publication) {
+/*	void setPublication(PublicationReadWrite publication) {
 		this.publication = publication;
 	}
 	
@@ -59,7 +58,7 @@ public class CodeReadWrite extends Code {
 			publication = super.getPublication();
 		}
 		return publication;
-	}
+	}*/
 	
 	@Override
 	public CompanionSite getCompanionSite(){
@@ -72,6 +71,19 @@ public class CodeReadWrite extends Code {
 	void setCompanionSite(CompanionSiteReadWrite companionSite) {
 		this.companionSite = companionSite;
 	}
+
+	public boolean addInput(InputDataReadWrite input) {
+		if(inputs == null){
+			inputs = this.getInputs();	// try to get authors form the server
+		}
+		if(inputs.contains(input) == false){
+			inputs.add(input);
+			input.setCode(this);
+			return true;
+		}
+		return false;
+	}
+	
 	
 	
 

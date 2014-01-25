@@ -86,10 +86,19 @@ public class MainBenchmarking {
 				System.out.println("probleme car les 2 publis sont différentes");
 			}*/
 			
-			InputData inputData = referenceImplementation.getReferenceInputData();
-			System.out.println(inputData);
+			//InputData inputData = referenceImplementation.getReferenceInputData();
+			List<InputData> inputs = referenceImplementation.getInputs();
+			System.out.println(inputs);
 			
-			Program program = new Program();
+			InputData inputData = inputs.get(0);
+			Code code = inputData.getCode();
+			if(referenceImplementation.equals(code)){
+				System.out.println("les deux codes sont égaux");
+			} else{
+				System.out.println("probleme car les 2 codes sont différentes");
+			}
+			
+/*			Program program = new Program();
 			program.setCode(referenceImplementation);
 			program.addInputDate(inputData);
 			program.execute();
@@ -97,7 +106,7 @@ public class MainBenchmarking {
 			ThematicSite thematicSite = new ThematicSite();
 			thematicSite.addProgram(program);
 			
-			thematicSite.execute();
+			thematicSite.execute();*/
 			
 		}catch(Exception e){
 			e.printStackTrace();
