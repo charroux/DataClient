@@ -10,6 +10,7 @@ import org.oLabDynamics.client.CompanionSite;
 import org.oLabDynamics.client.ExecShare;
 import org.oLabDynamics.client.ExecShareConnexionFactory;
 import org.oLabDynamics.client.InputData;
+import org.oLabDynamics.client.OutputData;
 import org.oLabDynamics.client.Program;
 import org.oLabDynamics.client.Publication;
 import org.oLabDynamics.client.Query;
@@ -93,6 +94,17 @@ public class MainBenchmarking {
 			InputData inputData = inputs.get(0);
 			Code code = inputData.getCode();
 			if(referenceImplementation.equals(code)){
+				System.out.println("les deux codes sont égaux");
+			} else{
+				System.out.println("probleme car les 2 codes sont différentes");
+			}
+
+			List<OutputData> outputs = referenceImplementation.getOutputs();
+			System.out.println(outputs);
+			
+			OutputData outputData = outputs.get(0);
+			Code code1 = outputData.getCode();
+			if(referenceImplementation.equals(code1)){
 				System.out.println("les deux codes sont égaux");
 			} else{
 				System.out.println("probleme car les 2 codes sont différentes");

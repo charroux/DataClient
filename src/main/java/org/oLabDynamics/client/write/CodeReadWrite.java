@@ -31,8 +31,8 @@ public class CodeReadWrite extends Code {
 	@JsonIgnore
 	CompanionSite companionSite;
 	
-	@JsonIgnore
-	InputData referenceInputData;
+/*	@JsonIgnore
+	InputData referenceInputData;*/
 	
 	List<InputData> inputs;
 	
@@ -82,6 +82,25 @@ public class CodeReadWrite extends Code {
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public List<InputData> getInputs() {
+		if(inputs == null){	// la liste des publications n'a pas été réinitialisée, on peut prendre celle du serveur
+			List<InputData> inputsFromTheServer = super.getInputs();
+			if(inputsFromTheServer == null){
+				return inputs = new ArrayList<InputData>();
+			} else {
+				return inputs = inputsFromTheServer;
+			}
+		}
+		return inputs;
+	}
+
+	@Override
+	public String toString() {
+		return "CodeReadWrite [inputs=" + inputs + ", configurations="
+				+ configurations + "]";
 	}
 	
 	
