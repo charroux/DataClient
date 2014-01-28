@@ -20,6 +20,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.security.crypto.codec.Base64;
 
+/**
+ * Caches data from the server: get data from the server only at the first call of a getter method.
+ * @author charroux
+ *
+ */
 public class AuthorReadWrite extends Author {
 
 	@JsonIgnore
@@ -34,12 +39,6 @@ public class AuthorReadWrite extends Author {
 		super.setFirstName(firstName);
 		super.setLastName(lastName);
 	}
-	
-	
-/*	
-	public void setPublications(List<Publication> publications) {
-		this.publications = publications;
-	}*/
 
 	@Override
 	public List<Publication> getPublications(){
@@ -60,19 +59,6 @@ public class AuthorReadWrite extends Author {
 		}
 		this.publications.add(publication);
 	}
-
-	/*boolean removePublication(PublicationReadWrite publication) {
-		if(publications == null){	// la liste des publications n'a pas été réinitialisée, on peut prendre celle du serveur
-			publications = this.getPublications();
-		}
-		return publications.remove(publication);
-	}*/
-
-/*	@Override
-	public String toString() {
-		return "AuthorReadWrite [publications=" + publications
-				+ ", toString()=" + super.toString() + "]";
-	}*/
 
 	@Override
 	public int hashCode() {

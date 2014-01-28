@@ -7,6 +7,7 @@ import org.springframework.hateoas.Link;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.oLabDynamics.client.Code;
 import org.oLabDynamics.client.InputData;
+import org.oLabDynamics.client.OutputData;
 import org.oLabDynamics.client.Publication;
 import org.oLabDynamics.rest.ResourceSupport;
 import org.springframework.http.HttpEntity;
@@ -22,18 +23,18 @@ import org.springframework.web.client.RestTemplate;
  * @author charroux
  *
  */
-public class InputDataReadWrite extends InputData {
+public class OutputDataReadWrite extends OutputData {
 	
 	@JsonIgnore
 	Code code;
 	
-	public InputDataReadWrite(){
+	public OutputDataReadWrite(){
 		super();
 	}
 
 	@Override
 	public String toString() {
-		return "InputDataReadWrite [toString()=" + super.toString() + "]";
+		return "OutputDataReadWrite [toString()=" + super.toString() + "]";
 	}
 	
 	@Override

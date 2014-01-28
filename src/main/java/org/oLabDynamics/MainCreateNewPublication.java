@@ -16,7 +16,13 @@ import org.oLabDynamics.client.OperatingSystem;
 import org.oLabDynamics.client.Program;
 import org.oLabDynamics.client.Publication;
 import org.oLabDynamics.client.Query;
+import org.oLabDynamics.client.Publication.PublicationType;
 import org.oLabDynamics.client.Query.FilterOperator;
+import org.oLabDynamics.client.write.AuthorReadWrite;
+import org.oLabDynamics.client.write.CodeReadWrite;
+import org.oLabDynamics.client.write.CompanionSiteReadWrite;
+import org.oLabDynamics.client.write.InputDataReadWrite;
+import org.oLabDynamics.client.write.OutputDataReadWrite;
 import org.oLabDynamics.client.write.PublicationReadWrite;
 import org.oLabDynamics.client.ThematicSite;
 import org.oLabDynamics.client.UnsupportedConfigurationException;
@@ -40,20 +46,23 @@ public class MainCreateNewPublication {
 		
 		try{
 			
-			//PublicationReadWrite publication = new PublicationReadWrite("Un nouvel algorithme", PublicationReadWrite.Type.WorkingPaper);
-			PublicationReadWrite publication = new PublicationReadWrite();
+			PublicationReadWrite publication = new PublicationReadWrite(PublicationType.WORKING_PAPER, "bla bla");
 			
-	/*		List<Author> authors = new ArrayList<Author>();
-			
-			Author author = new Author("Christophe", "Marchand");
-			authors.add(author);
-			
-			author = new Author("Paul", "Durand");
-			authors.add(author);
-			
-			publication.setAuthors(authors);*/
-			
-			//publication.publishPublication(PublicationReadWrite.PublicationMode.ForContactsOnly);
+	        AuthorReadWrite arw = new AuthorReadWrite("n1", "n2");
+	        publication.addAuthor(arw, 1);
+	        
+	        CompanionSiteReadWrite crw = new CompanionSiteReadWrite();
+	        publication.setCompanionSite(crw);
+	        
+	        CodeReadWrite cwr = new CodeReadWrite("bla bla");
+	        crw.setReferenceImplementation(cwr);
+	        
+	        InputDataReadWrite irw = new InputDataReadWrite();
+	        cwr.addInput(irw);
+	        
+	        OutputDataReadWrite orw = new OutputDataReadWrite();
+	        cwr.addOutput(orw);
+	        
 			publication.publishPublication();
 			
 /*			File code = new File("MonCode.mat");

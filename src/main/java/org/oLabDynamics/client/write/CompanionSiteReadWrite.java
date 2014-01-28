@@ -24,11 +24,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.web.client.RestTemplate;
 
-
 /**
- * Site
+ * Caches data from the server: get data from the server only at the first call of a getter method.
+ * @author charroux
+ *
  */
-
 public class CompanionSiteReadWrite extends CompanionSite{
 	
 	@JsonIgnore
@@ -39,14 +39,6 @@ public class CompanionSiteReadWrite extends CompanionSite{
 	public CompanionSiteReadWrite(){
 		super();
 	}
-	
-	
-	
-/*	public void setPublication(Publication publication) {
-		this.publication = publication;
-	}*/
-
-
 
 	@Override
 	public Publication getPublication(){
@@ -81,8 +73,6 @@ public class CompanionSiteReadWrite extends CompanionSite{
 				+ referenceImplementation + "]";
 	}
 
-
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -95,8 +85,6 @@ public class CompanionSiteReadWrite extends CompanionSite{
 						: referenceImplementation.hashCode());
 		return result;
 	}
-
-
 
 	@Override
 	public boolean equals(Object obj) {

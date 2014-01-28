@@ -26,56 +26,27 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * Caches data from the server: get data from the server only at the first call of a getter method.
+ * @author charroux
+ *
+ */
 public class PublicationReadWrite extends Publication {
 	
-/*	public enum Type{
-		WorkingPaper,
-		PublishedPaper
-	}
-
-	public enum PublicationMode{
-		ForContactsOnly
-	}
-	
-	@JsonIgnore
-	Type type;*/
-
-	//@JsonManagedReference
 	private List<Author> authors = null;
 	
-	//private Code referenceImplementation = null;
-	
-	//@JsonManagedReference
 	private CompanionSite companionSite = null;
 	
 	public PublicationReadWrite(){
 		super();
 	}
 	
-	public PublicationReadWrite(String title) {
+	public PublicationReadWrite(PublicationType publicationType, String title) {
 		super();
+		super.setPublicationType(publicationType);
 		super.setTitle(title);
 	}
 
-/*	public PublicationReadWrite(String title, Type type) {
-		super();
-		super.setTitle(title);
-		//this.type = type;
-	}  */
-	
-	
-/*	public Type getType() {
-		return type;
-	}
-
-	public void setType(Type type) {
-		this.type = type;
-	}*/
-/*
-	public void setCompanionSite(CompanionSite companionSite) {
-		//this.companionSite = companionSite;
-	}
-*/
 	/**
 	 * 
 	 * @param author
@@ -147,25 +118,6 @@ public class PublicationReadWrite extends Publication {
 		companionSite.setPublication(this);
 	}
 
-	/**
-	 * 
-	 * @return the reference implementation (from the server or a new implementation if {@link #setReferenceImplementation setReferenceImplementation} has been used 
-	 */
-/*	@Override
-	public Code getReferenceImplementation(){
-		if(referenceImplementation == null){
-			referenceImplementation = super.getReferenceImplementation();
-		}
-		System.out.println("getReferenceImplementation " + referenceImplementation);
-		return referenceImplementation;
-	}
-
-	public void setReferenceImplementation(CodeReadWrite referenceImplementation) {
-		this.referenceImplementation = referenceImplementation;
-		referenceImplementation.setPublication(this);
-	}*/
-
-	//public void publishPublication(PublicationMode publicationMode) {
 	public void publishPublication() {
 		class Local {};
 		Method currentMethod = Local.class.getEnclosingMethod();
@@ -185,45 +137,10 @@ public class PublicationReadWrite extends Publication {
     	byte[] encodedAuthorisation = Base64.encode(auth.getBytes());
         headers.add("Authorization", "Basic " + new String(encodedAuthorisation));
         
-        //PublicationReadWrite pwr = new PublicationReadWrite("blabla", PublicationReadWrite.Type.PublishedPaper);
-        PublicationReadWrite pwr = new PublicationReadWrite("bla bla");
-        
-        AuthorReadWrite arw = new AuthorReadWrite("n1", "n2");
-        pwr.addAuthor(arw, 1);
-        
-        CompanionSiteReadWrite crw = new CompanionSiteReadWrite();
-        pwr.setCompanionSite(crw);
-        
-        CodeReadWrite cwr = new CodeReadWrite("bla bla");
-        crw.setReferenceImplementation(cwr);
-        
-        InputDataReadWrite irw = new InputDataReadWrite();
-        cwr.addInput(irw);
-        
-        //pwr.setReferenceImplementation(cwr);
-        
-        System.out.println(pwr);
-        
-        HttpEntity<PublicationReadWrite> entity = new HttpEntity<PublicationReadWrite>(pwr,headers);
-        
-       /* org.oLabDynamics.model.dto1.Pub p = new org.oLabDynamics.model.dto1.Pub();
-        p.setTitle("blabla");
-        org.oLabDynamics.model.dto1.Author a = new org.oLabDynamics.model.dto1.Author();
-        p.getAuthors().add(a);
-        
-		HttpEntity<org.oLabDynamics.model.dto1.Publication> entity = new HttpEntity<org.oLabDynamics.model.dto1.Publication>(p,headers);
-		*/
-		//System.out.println(href);
+        HttpEntity<PublicationReadWrite> entity = new HttpEntity<PublicationReadWrite>(this,headers);
 		
 		ResponseEntity<ResourceSupport> response = restTemplate.exchange(href, HttpMethod.POST, entity, ResourceSupport.class);
 		System.out.println(response.getBody());
-		
-/*		link = super.getLink("self");
-		if(link == null){
-			restTemplate.exchange(href, HttpMethod.POST, entity, Code.class);
-		} else {
-			String href = link.getHref();
-		}*/
 		
 	}
 
@@ -232,26 +149,5 @@ public class PublicationReadWrite extends Publication {
 		return "PublicationReadWrite [authors=" + authors + ", companionSite="
 				+ companionSite + "]";
 	}
-	
-	
-
-/*	@Override
-	public String toString() {
-		return "PublicationReadWrite [authors=" + authors
-				+ ", referenceImplementation=" + referenceImplementation
-				+ ", companionSite=" + companionSite + ", toString()="
-				+ super.toString() + "]";
-	}*/
-
-	/*@Override
-	public String toString() {
-		return "PublicationReadWrite [type=" + type + ", authors=" + authors
-				+ ", companionSite=" + companionSite + "]";
-	}*/
-
-	
-	
-	
-	
-	
+		
 }

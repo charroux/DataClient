@@ -13,6 +13,7 @@ import org.oLabDynamics.client.Code;
 import org.oLabDynamics.client.CompanionSite;
 import org.oLabDynamics.client.Configuration;
 import org.oLabDynamics.client.InputData;
+import org.oLabDynamics.client.OutputData;
 import org.oLabDynamics.client.Publication;
 import org.oLabDynamics.rest.ResourceSupport;
 import org.springframework.http.HttpEntity;
@@ -23,18 +24,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * Caches data from the server: get data from the server only at the first call of a getter method.
+ * @author charroux
+ *
+ */
 public class CodeReadWrite extends Code {
-	
-	//@JsonIgnore
-	//Publication publication;
-	
+
 	@JsonIgnore
 	CompanionSite companionSite;
 	
-/*	@JsonIgnore
-	InputData referenceInputData;*/
-	
 	List<InputData> inputs;
+	List<OutputData> outputs;
 	
 	@JsonIgnore
 	Set<Configuration> configurations;
@@ -47,18 +48,6 @@ public class CodeReadWrite extends Code {
 		super();
 		super.setDescription(description);
 	}
-
-/*	void setPublication(PublicationReadWrite publication) {
-		this.publication = publication;
-	}
-	
-	@Override
-	public Publication getPublication() {
-		if(publication == null){
-			publication = super.getPublication();
-		}
-		return publication;
-	}*/
 	
 	@Override
 	public CompanionSite getCompanionSite(){
@@ -96,22 +85,36 @@ public class CodeReadWrite extends Code {
 		}
 		return inputs;
 	}
+	
+	public boolean addOutput(OutputDataReadWrite output) {
+		if(outputs == null){
+			outputs = this.getOutputs();	// try to get authors form the server
+		}
+		if(outputs.contains(output) == false){
+			outputs.add(output);
+			output.setCode(this);
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public List<OutputData> getOutputs() {
+		if(outputs == null){	// la liste des publications n'a pas été réinitialisée, on peut prendre celle du serveur
+			List<OutputData> outputsFromTheServer = super.getOutputs();
+			if(outputsFromTheServer == null){
+				return outputs = new ArrayList<OutputData>();
+			} else {
+				return outputs = outputsFromTheServer;
+			}
+		}
+		return outputs;
+	}
 
 	@Override
 	public String toString() {
-		return "CodeReadWrite [inputs=" + inputs + ", configurations="
-				+ configurations + "]";
+		return "CodeReadWrite [inputs=" + inputs + ", outputs=" + outputs
+				+ ", configurations=" + configurations + "]";
 	}
-	
-	
-	
-
-/*	@Override
-	public String toString() {
-		return "CodeReadWrite [publication=" + publication + ", toString()="
-				+ super.toString() + "]";
-	}*/
-
-	
 	
 }

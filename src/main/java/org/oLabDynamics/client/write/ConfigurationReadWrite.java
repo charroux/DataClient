@@ -8,6 +8,11 @@ import org.oLabDynamics.rest.ResourceSupport;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * Caches data from the server: get data from the server only at the first call of a getter method.
+ * @author charroux
+ *
+ */
 public class ConfigurationReadWrite extends Configuration {
 	
 	public ConfigurationReadWrite() {
