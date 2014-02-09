@@ -26,6 +26,8 @@ public class Query {
 			this.rel = "list of authors";
 		} else if(rel.equals("publication")){
 			this.rel = "list of publications";
+		} else if(rel.equals("thematicSite")){
+			this.rel = "list of thematic sites";
 		}
 	}
 

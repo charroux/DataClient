@@ -20,6 +20,21 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.stereotype.Component;
 
+/**
+ * According to the principles of REST, next states from a given state are discovered dynamically:
+ * a next state is given by a link (containing a URI and a relation ship name: rel).
+ * 
+ * When multiple states are allowed from a state: the one wish if chosen is given by a "convention de nomage" :
+ * to change the current state, the end user must choose one of the getter method, then the corresponding attribut name (discovered by 
+ * code introspection) gives the rel of the next step.
+ * 
+ * Only the main entry point is needed : it is given by the property execAndShare.serverEntryPoint
+ * contained into the property file named : execAndShare.properties
+ * 
+ * @author charroux
+ *
+ * @param <T>
+ */
 @Component
 public class ExecShare<T> {
 	
@@ -144,6 +159,11 @@ public class ExecShare<T> {
     	} else if(rel.equals("list of publications")){
     		ParameterizedTypeReference<List<Publication>> typeRef = new ParameterizedTypeReference<List<Publication>>() {};
         	ResponseEntity<List<Publication>> resp = restTemplate.exchange(href, HttpMethod.GET, entity, typeRef);
+    		List respBody = resp.getBody();
+    		return respBody;
+    	} else if(rel.equals("list of thematic sites")){
+    		ParameterizedTypeReference<List<ThematicSite>> typeRef = new ParameterizedTypeReference<List<ThematicSite>>() {};
+        	ResponseEntity<List<ThematicSite>> resp = restTemplate.exchange(href, HttpMethod.GET, entity, typeRef);
     		List respBody = resp.getBody();
     		return respBody;
     	}
