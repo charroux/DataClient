@@ -64,6 +64,23 @@ public class CompanionSite extends ResourceSupport{
 		return response.getBody();
 	}
 	
+	public List<ThematicSite> getThematicSites() {
+		class Local {};
+		Method currentMethod = Local.class.getEnclosingMethod();
+		String currentMethodName = currentMethod.getName();
+		String attributeName = currentMethodName.substring(3, 4).toLowerCase() + currentMethodName.substring(4);
+		Link link = super.getLink(attributeName);
+		if(link == null){
+			return new ArrayList<ThematicSite>();
+		}
+		String href = link.getHref();
+		
+		ParameterizedTypeReference<List<ThematicSite>> typeRef = new ParameterizedTypeReference<List<ThematicSite>>() {};
+		ResponseEntity<List<ThematicSite>> response = restTemplate.exchange(href, HttpMethod.GET, entity, typeRef);
+    	
+		return response.getBody();
+	}
+	
 /*	public List<Code> getCodes() {
 		return new ArrayList<Code>();
 	}*/

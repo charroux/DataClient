@@ -15,6 +15,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.oLabDynamics.client.Code;
 import org.oLabDynamics.client.CompanionSite;
 import org.oLabDynamics.client.Publication;
+import org.oLabDynamics.client.ThematicSite;
 import org.oLabDynamics.rest.ResourceSupport;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -36,6 +37,9 @@ public class CompanionSiteReadWrite extends CompanionSite{
 	
 	Code referenceImplementation = null;
 	
+	@JsonIgnore
+	List<ThematicSite> thematicSites = null;
+	
 	public CompanionSiteReadWrite(){
 		super();
 	}
@@ -50,6 +54,26 @@ public class CompanionSiteReadWrite extends CompanionSite{
 
 	void setPublication(PublicationReadWrite publication) {
 		this.publication = publication;
+	}
+	
+	@Override
+	public List<ThematicSite> getThematicSites() {
+		if(thematicSites == null){	// la liste des thematicSites n'a pas été réinitialisée, on peut prendre celle du serveur
+			List<ThematicSite> thematicSitesFromTheServer = super.getThematicSites();
+			if(thematicSitesFromTheServer == null){
+				return thematicSites = new ArrayList<ThematicSite>();
+			} else {
+				return thematicSites = thematicSitesFromTheServer;
+			}
+		}
+		return thematicSites;
+	}
+	
+	void addThematicSite(ThematicSite thematicSite) {
+		if(thematicSites == null){	// la liste des thematicSites n'a pas été réinitialisée, on peut prendre celle du serveur
+			thematicSites = this.getThematicSites();
+		}
+		this.thematicSites.add(thematicSite);
 	}
 	
 	@Override

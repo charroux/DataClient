@@ -76,6 +76,10 @@ public class MainThematicSite {
 				System.out.println("probleme car les 2 codes sont différentes");
 			}
 			
+			thematicSites = companionSite.getThematicSites();
+			ThematicSite thematicSite1 = thematicSites.get(0);
+			System.out.println(thematicSite1);
+			
 		}catch(Exception e){
 			e.printStackTrace();
 		}

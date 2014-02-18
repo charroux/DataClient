@@ -140,7 +140,6 @@ public class PublicationReadWrite extends Publication {
         HttpEntity<PublicationReadWrite> entity = new HttpEntity<PublicationReadWrite>(this,headers);
 		
 		ResponseEntity<ResourceSupport> response = restTemplate.exchange(href, HttpMethod.POST, entity, ResourceSupport.class);
-		System.out.println(response.getBody());
 		
 	}
 
