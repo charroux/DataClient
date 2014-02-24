@@ -46,7 +46,27 @@ public class MainCreateNewPublication {
 		
 		try{
 			
-			PublicationReadWrite publication = new PublicationReadWrite(PublicationType.WORKING_PAPER, "bla bla");
+			ExecShare execShare = ExecShare.getInstance();
+			
+			Query query = new Query("author");
+			query.addFilter("name", Query.FilterOperator.EQUAL, "Tintin");
+			List<Author> authors = execShare.prepare(query);
+			Author author = authors.get(0);
+			System.out.println(author);
+			
+			author.setFirstName("Hadock");
+			
+			Publication publication = new Publication();
+			publication.setTitle("Une nouvelle publication");
+			publication.setPublicationType(PublicationType.WORKING_PAPER);
+			publication.addAuthor(author, 1);
+			
+			author.save();
+			
+			//publication.save();
+			
+			
+/*			PublicationReadWrite publication = new PublicationReadWrite(PublicationType.WORKING_PAPER, "bla bla");
 			
 	        AuthorReadWrite arw = new AuthorReadWrite("n1", "n2");
 	        publication.addAuthor(arw, 1);
@@ -63,50 +83,9 @@ public class MainCreateNewPublication {
 	        OutputDataReadWrite orw = new OutputDataReadWrite();
 	        cwr.addOutput(orw);
 	        
-			publication.publishPublication();
+			publication.publishPublication();*/
 			
-/*			File code = new File("MonCode.mat");
-			Code referenceImplementation = new Code(code);
-			
-			Configuration configuration;
-			
-			ExecShare execShare = new ExecShare();
-			Query query = new Query("configuration");
-			query.addFilter("operatingSystem.distribution", Query.FilterOperator.EQUAL, "CentOs");
-			query.addFilter("version", Query.FilterOperator.EQUAL, "2.3");
-			query.addFilter("programmingLanguage", Query.FilterOperator.EQUAL, "Matlab");
-			query.addFilter("libraries", Query.FilterOperator.CONTAIN, "Toolbox1", "Toobox2");
-			
-			List<Configuration> configurations = execShare.prepare(query);
-			if(configurations.size() == 0){	// configuration demandée inexistante => demande crétion nouvelle configuration
-			
-				String programmingLanguage = "Matlab";
-				configuration = new Configuration(programmingLanguage);
-				Linux linux = new Linux("Centos", "2.3");
-				configuration.setOperatingSystem(linux);
-				Library library = new Library("Toolbox1");
-				configuration.addLibrary(library);
-				library = new Library("Toolbox2");
-				configuration.addLibrary(library);
-				
-			}
-			
-			referenceImplementation.setConfiguration(configuration);
-				
-			publication.setReferenceImplementation(referenceImplementation);
-			
-			File data = new File("mydata");
-			InputData inputData = new InputData(data);
-			
-			referenceImplementation.setReferenceInputData(inputData);
-			
-			OutputData outputData = publication.launch(login, password, Publication.LaunchMode.Test);
-
-			publication.publishPublication(Publication.Type.PublishedPaper);
-			
-		}catch(UnsupportedConfigurationException e){
-			e.printStackTrace();
-		*/}catch(Exception e){
+		}catch(Exception e){
 			e.printStackTrace();
 		}
 		

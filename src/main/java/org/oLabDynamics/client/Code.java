@@ -9,6 +9,9 @@ import java.util.Set;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Link;
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.oLabDynamics.client.write.CompanionSiteReadWrite;
+import org.oLabDynamics.client.write.InputDataReadWrite;
+import org.oLabDynamics.client.write.OutputDataReadWrite;
 import org.oLabDynamics.rest.ResourceSupport;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,6 +22,10 @@ import org.springframework.security.crypto.codec.Base64;
 import org.springframework.web.client.RestTemplate;
 
 public class Code extends ResourceSupport {
+	
+	List<CompanionSite> companionSites;
+	List<InputData> inputs;
+	List<OutputData> outputs;
 	
 	String description;
 	
@@ -43,7 +50,40 @@ public class Code extends ResourceSupport {
         entity = new HttpEntity<String>(headers);
 	}
 	
-	public CompanionSite getCompanionSite(){
+	public boolean addInput(InputData input) {
+		if(inputs == null){
+			inputs = this.getInputs();	// try to get authors form the server
+			if(inputs == null){
+				inputs = new ArrayList<InputData>();
+			}
+		}
+		if(inputs.contains(input) == false){
+			inputs.add(input);
+			input.setCode(this);
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean addOutput(OutputData output) {
+		if(outputs == null){
+			outputs = this.getOutputs();	// try to get authors form the server
+			if(outputs == null){
+				outputs = new ArrayList<OutputData>();
+			}
+		}
+		if(outputs.contains(output) == false){
+			outputs.add(output);
+			output.setCode(this);
+			return true;
+		}
+		return false;
+	}
+	
+	public List<CompanionSite> getCompanionSites(){
+		if(companionSites != null){
+			return companionSites;
+		}
 		class Local {};
 		Method currentMethod = Local.class.getEnclosingMethod();
 		String currentMethodName = currentMethod.getName();
@@ -56,12 +96,31 @@ public class Code extends ResourceSupport {
 		
 		String href = link.getHref();
 
-		ResponseEntity<CompanionSite> response = restTemplate.exchange(href, HttpMethod.GET, entity, CompanionSite.class);
+		ParameterizedTypeReference<List<CompanionSite>> typeRef = new ParameterizedTypeReference<List<CompanionSite>>() {};
+		ResponseEntity<List<CompanionSite>> response = restTemplate.exchange(href, HttpMethod.GET, entity, typeRef);
     	
 		return response.getBody();
 	}
 	
+	public boolean addCompanionSite(CompanionSite companionSite) {
+		if(companionSites == null){
+			companionSites = this.getCompanionSites();
+			if(companionSites == null){
+				companionSites = new ArrayList<CompanionSite>();
+			}
+		}
+		if(companionSites.contains(companionSite) == false){
+			companionSites.add(companionSite);
+			companionSite.setCode(this);
+			return true;
+		}
+		return false;
+	}
+	
 	public List<InputData> getInputs(){
+		if(inputs != null){
+			return inputs;
+		}
 		class Local {};
 		Method currentMethod = Local.class.getEnclosingMethod();
 		String currentMethodName = currentMethod.getName();
@@ -79,6 +138,9 @@ public class Code extends ResourceSupport {
 	}
 	
 	public List<OutputData> getOutputs(){
+		if(outputs != null){
+			return outputs;
+		}
 		class Local {};
 		Method currentMethod = Local.class.getEnclosingMethod();
 		String currentMethodName = currentMethod.getName();
@@ -179,11 +241,11 @@ public class Code extends ResourceSupport {
 
 		return response.getBody();
 	}
-	
+
 	@Override
 	public String toString() {
-		return "Code [description=" + description + ", toString()="
-				+ super.toString() + "]";
+		return "Code [companionSites=" + companionSites + ", inputs=" + inputs
+				+ ", outputs=" + outputs + ", description=" + description + "]";
 	}
 
 	@Override
@@ -191,7 +253,11 @@ public class Code extends ResourceSupport {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result
+				+ ((companionSites == null) ? 0 : companionSites.hashCode());
+		result = prime * result
 				+ ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((inputs == null) ? 0 : inputs.hashCode());
+		result = prime * result + ((outputs == null) ? 0 : outputs.hashCode());
 		return result;
 	}
 
@@ -204,13 +270,29 @@ public class Code extends ResourceSupport {
 		if (getClass() != obj.getClass())
 			return false;
 		Code other = (Code) obj;
+		if (companionSites == null) {
+			if (other.companionSites != null)
+				return false;
+		} else if (!companionSites.equals(other.companionSites))
+			return false;
 		if (description == null) {
 			if (other.description != null)
 				return false;
 		} else if (!description.equals(other.description))
 			return false;
+		if (inputs == null) {
+			if (other.inputs != null)
+				return false;
+		} else if (!inputs.equals(other.inputs))
+			return false;
+		if (outputs == null) {
+			if (other.outputs != null)
+				return false;
+		} else if (!outputs.equals(other.outputs))
+			return false;
 		return true;
 	}
-
-
+	
+	
+	
 }

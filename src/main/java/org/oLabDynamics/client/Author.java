@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Link;
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.oLabDynamics.client.write.PublicationReadWrite;
 import org.oLabDynamics.rest.ResourceSupport;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -20,12 +21,16 @@ import org.springframework.security.crypto.codec.Base64;
 public class Author extends ResourceSupport {
 	
 	@JsonIgnore
+	private ArrayList<Publication> publications = null;
+	
+	@JsonIgnore
 	RestTemplate restTemplate;
 	@JsonIgnore
 	HttpEntity<String> entity;
 	
 	String firstName;
 	String lastName;
+
 	
 	public Author(){
 		ExecShare execShare = ExecShare.getInstance();
@@ -57,8 +62,29 @@ public class Author extends ResourceSupport {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
+	
+	boolean addPublication(Publication publication) {
+		if(publications == null){	
+			publications = this.getPublications(); 	// get from the server
+			if(publications == null){				// nothing at the server
+				publications = new ArrayList<Publication>();
+			}
+		}
+		if(publications.contains(publication) == false){
+			publications.add(publication);
+			return true;
+		}
+		return false;
+	}
 
-	public List<Publication> getPublications() {
+	public ArrayList<Publication> getPublications() {
+		
+		if(publications != null){	
+			return publications;
+		}
+		
+		System.out.println("getPublications");
+		
 		class Local {};
 		Method currentMethod = Local.class.getEnclosingMethod();
 		String currentMethodName = currentMethod.getName();
@@ -69,16 +95,66 @@ public class Author extends ResourceSupport {
 		}
 		String href = link.getHref();
 		
-		ParameterizedTypeReference<List<Publication>> typeRef = new ParameterizedTypeReference<List<Publication>>() {};
-		ResponseEntity<List<Publication>> response = restTemplate.exchange(href, HttpMethod.GET, entity, typeRef);
+		ParameterizedTypeReference<ArrayList<Publication>> typeRef = new ParameterizedTypeReference<ArrayList<Publication>>() {};
+		ResponseEntity<ArrayList<Publication>> response = restTemplate.exchange(href, HttpMethod.GET, entity, typeRef);
     	
 		return response.getBody();
+	}
+	
+	public void save(){
+		Link link = super.getLink("self");
+		if(link == null){
+			
+		}
+		
+/*		List<Publication> copyPublications = new ArrayList<Publication>();
+		
+		if(publications != null){	
+			for(int i=0; i<publications.size(); i++){
+				copyPublications.add(publications.get(i));
+			}
+			publications = null;
+		}*/
+
+		HttpHeaders headers = new HttpHeaders();
+    	headers.setContentType(MediaType.APPLICATION_JSON);
+    	
+    	ExecShareConnexionFactory connexionFactory = ExecShare.getInstance().getExecShareConnexionFactory();
+    	//RestTemplate restTemplate = ExecShare.getInstance().getRestTemplate();
+    	String auth = connexionFactory.getUserName() + ":" + connexionFactory.getPassword();
+
+    	byte[] encodedAuthorisation = Base64.encode(auth.getBytes());
+        headers.add("Authorization", "Basic " + new String(encodedAuthorisation));
+        
+        System.out.println(this);
+        
+		HttpEntity<Author> entity1 = new HttpEntity<Author>(this,headers);
+		
+		String href = link.getHref();
+		
+		restTemplate.exchange(href, HttpMethod.PUT, entity1, ResourceSupport.class);
+		
+		if(publications != null){
+			//publications = copyPublications;
+			
+			link = super.getLink("publications");
+			if(link == null){
+			}
+			
+			href = link.getHref();
+			
+			HttpEntity<Publication[]> entities = new HttpEntity<Publication[]>(publications.toArray(new Publication[0]),headers);
+			
+			ParameterizedTypeReference<Publication[]> typeRef = new ParameterizedTypeReference<Publication[]>() {};
+			restTemplate.exchange(href, HttpMethod.PUT, entities, typeRef);
+		}
+		
 	}
 
 	@Override
 	public String toString() {
 		return "Author [firstName=" + firstName + ", lastName=" + lastName
-				+ ", toString()=" + super.toString() + "]";
+				+ "]";
 	}
 
 	@Override
@@ -89,6 +165,8 @@ public class Author extends ResourceSupport {
 				+ ((firstName == null) ? 0 : firstName.hashCode());
 		result = prime * result
 				+ ((lastName == null) ? 0 : lastName.hashCode());
+		result = prime * result
+				+ ((publications == null) ? 0 : publications.hashCode());
 		return result;
 	}
 
@@ -111,15 +189,12 @@ public class Author extends ResourceSupport {
 				return false;
 		} else if (!lastName.equals(other.lastName))
 			return false;
+		if (publications == null) {
+			if (other.publications != null)
+				return false;
+		} else if (!publications.equals(other.publications))
+			return false;
 		return true;
 	}
-
-
-
-	
-
-	
-	
-	
 
 }

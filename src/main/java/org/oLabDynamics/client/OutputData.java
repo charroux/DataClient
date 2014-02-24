@@ -4,6 +4,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import org.springframework.hateoas.Link;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.oLabDynamics.client.write.CodeReadWrite;
 import org.oLabDynamics.rest.ResourceSupport;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +18,9 @@ import org.springframework.web.client.RestTemplate;
 public class OutputData extends ResourceSupport {
 	
 	String description;
+	
+	@JsonIgnore
+	Code code;
 	
 	RestTemplate restTemplate;
 	HttpEntity<String> entity;
@@ -36,6 +41,9 @@ public class OutputData extends ResourceSupport {
 	}
 	
 	public Code getCode() {
+		if(code != null){
+			return code;
+		}
 		class Local {};
 		Method currentMethod = Local.class.getEnclosingMethod();
 		String currentMethodName = currentMethod.getName();
@@ -51,6 +59,10 @@ public class OutputData extends ResourceSupport {
     	
 		return response.getBody();
 	}
+	
+	void setCode(Code code) {
+		this.code = code;
+	}
 
 	public String getDescription() {
 		return description;
@@ -62,14 +74,14 @@ public class OutputData extends ResourceSupport {
 
 	@Override
 	public String toString() {
-		return "OutputData [description=" + description + ", toString()="
-				+ super.toString() + "]";
+		return "OutputData [description=" + description + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
+		result = prime * result + ((code == null) ? 0 : code.hashCode());
 		result = prime * result
 				+ ((description == null) ? 0 : description.hashCode());
 		return result;
@@ -84,6 +96,11 @@ public class OutputData extends ResourceSupport {
 		if (getClass() != obj.getClass())
 			return false;
 		OutputData other = (OutputData) obj;
+		if (code == null) {
+			if (other.code != null)
+				return false;
+		} else if (!code.equals(other.code))
+			return false;
 		if (description == null) {
 			if (other.description != null)
 				return false;

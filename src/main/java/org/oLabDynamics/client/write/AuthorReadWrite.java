@@ -86,6 +86,4 @@ public class AuthorReadWrite extends Author {
 		return true;
 	}
 
-	
-
 }

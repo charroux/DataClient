@@ -64,51 +64,40 @@ public class MainBenchmarking {
 			CompanionSite companionSite = publication.getCompanionSite();
 			System.out.println(companionSite);
 			
-			Code referenceImplementation = companionSite.getReferenceImplementation();
-			System.out.println(referenceImplementation);
-			
-/*			Code referenceImplementation = publication.getReferenceImplementation();
-			System.out.println(referenceImplementation);
-
-			Code code = companionSite.getReferenceImplementation();
+			Code code = companionSite.getCode();
 			System.out.println(code);
 			
-			if(referenceImplementation.equals(code)){
-				System.out.println("les deux codes sont égaux");
+			CompanionSite companionSite1 = code.getCompanionSites().get(0);
+			System.out.println(companionSite1);
+			
+			if(companionSite.equals(companionSite1)){
+				System.out.println("les deux companionSite sont égales");
 			} else{
-				System.out.println("probleme car les 2 codes sont différentes");
-			}*/
+				System.out.println("probleme car les 2 companionSites sont différentes");
+			}
 			
-/*			Publication publication2 = code.getPublication();
-			
-			if(publication2.equals(publication)){
-				System.out.println("les deux publis sont égales");
-			} else{
-				System.out.println("probleme car les 2 publis sont différentes");
-			}*/
-			
-			//InputData inputData = referenceImplementation.getReferenceInputData();
-			List<InputData> inputs = referenceImplementation.getInputs();
+			List<InputData> inputs = code.getInputs();
 			System.out.println(inputs);
 			
 			InputData inputData = inputs.get(0);
-			Code code = inputData.getCode();
-			if(referenceImplementation.equals(code)){
+			Code code1 = inputData.getCode();
+			if(code.equals(code1)){
 				System.out.println("les deux codes sont égaux");
 			} else{
 				System.out.println("probleme car les 2 codes sont différentes");
 			}
 
-			List<OutputData> outputs = referenceImplementation.getOutputs();
+			List<OutputData> outputs = code.getOutputs();
 			System.out.println(outputs);
 			
 			OutputData outputData = outputs.get(0);
-			Code code1 = outputData.getCode();
-			if(referenceImplementation.equals(code1)){
+			Code code2 = outputData.getCode();
+			if(code.equals(code2)){
 				System.out.println("les deux codes sont égaux");
 			} else{
 				System.out.println("probleme car les 2 codes sont différentes");
 			}
+
 			
 /*			Program program = new Program();
 			program.setCode(referenceImplementation);
