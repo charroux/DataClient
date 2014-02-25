@@ -47,28 +47,27 @@ public class MainCreateNewPublication {
 		
 		try{
 			
-			Author a = new Author();
-			a.setFirstName("Castafiore");
-			a.setLastName("Cantatrice");
-			
-			a.save();
-			
-			ExecShare execShare = ExecShareImpl.getInstance();
-			
-			Query query = new Query("author");
-			query.addFilter("name", Query.FilterOperator.EQUAL, "Tintin");
-			List<Author> authors = execShare.prepare(query);
-			Author author = authors.get(0);
-			System.out.println(author);
-			
-			author.setFirstName("Hadock");
+			Author author = new Author();
+			author.setFirstName("Castafiore");
+			author.setLastName("Cantatrice");
 			
 			Publication publication = new Publication();
 			publication.setTitle("Une nouvelle publication");
 			publication.setPublicationType(PublicationType.WORKING_PAPER);
 			publication.addAuthor(author, 1);
 			
-			author.save();
+			ExecShare execShare = ExecShareImpl.getInstance();
+			
+			execShare.persist(author);
+			
+			
+			Query query = new Query("author");
+			query.addFilter("firstName", Query.FilterOperator.EQUAL, "Castafiore");
+			List<Author> authors = execShare.prepare(query);
+			Author author1 = authors.get(0);
+			System.out.println("author1=" + author1);
+			
+			
 			
 			//publication.save();
 			

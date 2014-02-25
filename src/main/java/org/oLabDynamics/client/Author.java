@@ -84,8 +84,6 @@ public class Author extends ResourceSupport {
 			return publications;
 		}
 		
-		System.out.println("getPublications");
-		
 		class Local {};
 		Method currentMethod = Local.class.getEnclosingMethod();
 		String currentMethodName = currentMethod.getName();
@@ -102,58 +100,68 @@ public class Author extends ResourceSupport {
 		return response.getBody();
 	}
 	
-	public void save(){
+	void save(){
 		
-/*		List<Publication> copyPublications = new ArrayList<Publication>();
-		
-		if(publications != null){	
-			for(int i=0; i<publications.size(); i++){
-				copyPublications.add(publications.get(i));
-			}
-			publications = null;
-		}*/
-
 		HttpHeaders headers = new HttpHeaders();
     	headers.setContentType(MediaType.APPLICATION_JSON);
     	
-    	ExecShareConnexionFactory connexionFactory = ((ExecShareImpl)ExecShareImpl.getInstance()).getExecShareConnexionFactory();
-    	//RestTemplate restTemplate = ExecShare.getInstance().getRestTemplate();
+    	ExecShareImpl execShare = (ExecShareImpl) ExecShareImpl.getInstance();
+    	ExecShareConnexionFactory connexionFactory = execShare.getExecShareConnexionFactory();
     	String auth = connexionFactory.getUserName() + ":" + connexionFactory.getPassword();
 
     	byte[] encodedAuthorisation = Base64.encode(auth.getBytes());
         headers.add("Authorization", "Basic " + new String(encodedAuthorisation));
         
-        System.out.println(this);
+        if(super.getLinks().size() == 0){	// this is a new author 
+        	
+            String className = this.getClass().getName();
+    		className = className.substring(className.lastIndexOf(".")+1).toLowerCase();
+    		
+            String href = execShare.discoverLink(className).getHref() + "/new";
+
+        	HttpEntity entity = new HttpEntity(headers);
+        	
+        	// get a new author : new id, links, rel...
+        	ResponseEntity<Author> response = restTemplate.exchange(href, HttpMethod.GET, entity, Author.class);
+        	ResourceSupport resource = response.getBody();
+  
+        	super.add(resource.getLinks());      	
+        }
         
-		HttpEntity<Author> entity1 = new HttpEntity<Author>(this,headers);
-		
-		Link link = super.getLink("self");
-		if(link == null){
-			/*String className = this.getClass().getName();
-			className = className.substring(className.lastIndexOf(".")+1);
-			System.out.println(className);
-			restTemplate.exchange(href, HttpMethod.POST, entity1, ResourceSupport.class);*/
-		}
-		
-		String href = link.getHref();
-		
-		restTemplate.exchange(href, HttpMethod.PUT, entity1, ResourceSupport.class);
+        String href = super.getLink("self").getHref();
+		HttpEntity<Author> entity = new HttpEntity<Author>(this,headers);
+	
+		restTemplate.exchange(href, HttpMethod.PUT, entity, Author.class);
 		
 		if(publications != null){
-			//publications = copyPublications;
 			
-			link = super.getLink("publications");
-			if(link == null){
+			for(int i=0; i<publications.size(); i++){
+				Publication publication = publications.get(i);
+				
+				 if(publication.getLinks().size() == 0){	// this is a new publication 
+			        	
+			            String className = publication.getClass().getName();
+			    		className = className.substring(className.lastIndexOf(".")+1).toLowerCase();
+			    		
+			            href = execShare.discoverLink(className).getHref() + "/new";
+
+			        	entity = new HttpEntity(headers);
+			        	
+			        	// get a new publication : new id, links, rel...
+			        	ResponseEntity<Publication> response = restTemplate.exchange(href, HttpMethod.GET, entity, Publication.class);
+			        	ResourceSupport resource = response.getBody();
+			  
+			        	publication.add(resource.getLinks());      	
+			        }
 			}
 			
-			href = link.getHref();
+			href = super.getLink("publications").getHref();
 			
 			HttpEntity<Publication[]> entities = new HttpEntity<Publication[]>(publications.toArray(new Publication[0]),headers);
 			
 			ParameterizedTypeReference<Publication[]> typeRef = new ParameterizedTypeReference<Publication[]>() {};
 			restTemplate.exchange(href, HttpMethod.PUT, entities, typeRef);
 		}
-		
 	}
 
 	@Override
