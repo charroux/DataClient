@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Link;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.oLabDynamics.client.write.PublicationReadWrite;
 import org.oLabDynamics.rest.ResourceSupport;
@@ -102,10 +103,6 @@ public class Author extends ResourceSupport {
 	}
 	
 	public void save(){
-		Link link = super.getLink("self");
-		if(link == null){
-			
-		}
 		
 /*		List<Publication> copyPublications = new ArrayList<Publication>();
 		
@@ -129,6 +126,14 @@ public class Author extends ResourceSupport {
         System.out.println(this);
         
 		HttpEntity<Author> entity1 = new HttpEntity<Author>(this,headers);
+		
+		Link link = super.getLink("self");
+		if(link == null){
+			/*String className = this.getClass().getName();
+			className = className.substring(className.lastIndexOf(".")+1);
+			System.out.println(className);
+			restTemplate.exchange(href, HttpMethod.POST, entity1, ResourceSupport.class);*/
+		}
 		
 		String href = link.getHref();
 		

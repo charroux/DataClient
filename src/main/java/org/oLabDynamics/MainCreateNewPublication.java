@@ -46,6 +46,12 @@ public class MainCreateNewPublication {
 		
 		try{
 			
+			Author a = new Author();
+			a.setFirstName("Castafiore");
+			a.setLastName("Cantatrice");
+			
+			a.save();
+			
 			ExecShare execShare = ExecShare.getInstance();
 			
 			Query query = new Query("author");
