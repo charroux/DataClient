@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Link;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.oLabDynamics.client.write.AuthorReadWrite;
 import org.oLabDynamics.client.write.CompanionSiteReadWrite;
@@ -203,52 +204,64 @@ public class Publication extends ResourceSupport {
 	}
 	
 	public void save(){
-		Link link = super.getLink("self");
-		if(link == null){
-			
-		}
 		
-		List<Author> copyAuthors = new ArrayList<Author>();
-		
-		if(authors != null){	
-			for(int i=0; i<authors.size(); i++){
-				copyAuthors.add(authors.get(i));
-			}
-			authors = null;
-		}
-
 		HttpHeaders headers = new HttpHeaders();
     	headers.setContentType(MediaType.APPLICATION_JSON);
     	
     	ExecShareImpl execShare = (ExecShareImpl) ExecShareImpl.getInstance();
     	ExecShareConnexionFactory connexionFactory = execShare.getExecShareConnexionFactory();
-    	RestTemplate restTemplate = execShare.getRestTemplate();
     	String auth = connexionFactory.getUserName() + ":" + connexionFactory.getPassword();
 
     	byte[] encodedAuthorisation = Base64.encode(auth.getBytes());
         headers.add("Authorization", "Basic " + new String(encodedAuthorisation));
         
+        if(super.getLinks().size() == 0){	// this is a new author 
+        	
+        	String className = this.getClass().getName();
+    		className = className.substring(className.lastIndexOf(".")+1);
+    		className = className.substring(0, 1).toLowerCase().concat(className.substring(1));
+    		
+            String href = execShare.discoverLink(className).getHref() + "/new";
+
+        	HttpEntity entity = new HttpEntity(headers);
+        	
+        	// get a new Publication : new id, links, rel...
+        	ResponseEntity<Publication> response = restTemplate.exchange(href, HttpMethod.GET, entity, Publication.class);
+        	ResourceSupport resource = response.getBody();
+  
+        	super.add(resource.getLinks());      	
+        }
+        
+        String href = super.getLink("self").getHref();
 		HttpEntity<Publication> entity = new HttpEntity<Publication>(this,headers);
+	
+		restTemplate.exchange(href, HttpMethod.PUT, entity, Publication.class);
 		
-		String href = link.getHref();
-		
-		restTemplate.exchange(href, HttpMethod.PUT, entity, ResourceSupport.class);
-		
-		if(authors != null){
-			authors = copyAuthors;
+		if(companionSite != null){
 			
-			link = super.getLink("authors");
-			if(link == null){
+			if(companionSite.getLinks().size() == 0){	// this is a new companionSite
+				
+				String className = companionSite.getClass().getName();
+		    	className = className.substring(className.lastIndexOf(".")+1);
+		    	className = className.substring(0, 1).toLowerCase().concat(className.substring(1));
+					
+			     href = execShare.discoverLink(className).getHref() + "/new";
+			     entity = new HttpEntity(headers);
+		        	
+		         // get a new publication : new id, links, rel...
+			     ResponseEntity<CompanionSite> response = restTemplate.exchange(href, HttpMethod.GET, entity, CompanionSite.class);
+			     ResourceSupport resource = response.getBody();
+			  
+			     companionSite.add(resource.getLinks()); 			     
 			}
 			
-			href = link.getHref();
+			href = super.getLink("companionSite").getHref();
 			
-			HttpEntity<List<Author>> entities = new HttpEntity<List<Author>>(authors,headers);
+			HttpEntity<CompanionSite> entity1 = new HttpEntity<CompanionSite>(companionSite,headers);
 			
-			ParameterizedTypeReference<List<Author>> typeRef = new ParameterizedTypeReference<List<Author>>() {};
-			restTemplate.exchange(href, HttpMethod.PUT, entities, typeRef);
-		}
-		
+			restTemplate.exchange(href, HttpMethod.PUT, entity, CompanionSite.class);
+			
+		}		
 	}
 
 	@Override

@@ -56,9 +56,13 @@ public class MainCreateNewPublication {
 			publication.setPublicationType(PublicationType.WORKING_PAPER);
 			publication.addAuthor(author, 1);
 			
+			CompanionSite companionSite = new CompanionSite();
+			publication.setCompanionSite(companionSite);
+			
 			ExecShare execShare = ExecShareImpl.getInstance();
 			
 			execShare.persist(author);
+			execShare.persist(publication);
 			
 			
 			Query query = new Query("author");

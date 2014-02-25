@@ -115,7 +115,8 @@ public class Author extends ResourceSupport {
         if(super.getLinks().size() == 0){	// this is a new author 
         	
             String className = this.getClass().getName();
-    		className = className.substring(className.lastIndexOf(".")+1).toLowerCase();
+    		className = className.substring(className.lastIndexOf(".")+1);
+    		className = className.substring(0, 1).toLowerCase().concat(className.substring(1));
     		
             String href = execShare.discoverLink(className).getHref() + "/new";
 
@@ -141,6 +142,8 @@ public class Author extends ResourceSupport {
 				 if(publication.getLinks().size() == 0){	// this is a new publication 
 			        	
 			            String className = publication.getClass().getName();
+			    		className = className.substring(className.lastIndexOf(".")+1);
+			    		className = className.substring(0, 1).toLowerCase().concat(className.substring(1));
 			    		className = className.substring(className.lastIndexOf(".")+1).toLowerCase();
 			    		
 			            href = execShare.discoverLink(className).getHref() + "/new";
