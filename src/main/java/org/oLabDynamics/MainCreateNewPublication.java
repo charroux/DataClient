@@ -10,6 +10,7 @@ import org.oLabDynamics.client.Code;
 import org.oLabDynamics.client.CompanionSite;
 import org.oLabDynamics.client.Configuration;
 import org.oLabDynamics.client.ExecShare;
+import org.oLabDynamics.client.ExecShareImpl;
 import org.oLabDynamics.client.InputData;
 import org.oLabDynamics.client.Linux;
 import org.oLabDynamics.client.OperatingSystem;
@@ -52,7 +53,7 @@ public class MainCreateNewPublication {
 			
 			a.save();
 			
-			ExecShare execShare = ExecShare.getInstance();
+			ExecShare execShare = ExecShareImpl.getInstance();
 			
 			Query query = new Query("author");
 			query.addFilter("name", Query.FilterOperator.EQUAL, "Tintin");

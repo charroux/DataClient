@@ -29,7 +29,7 @@ public class ThematicSite extends ResourceSupport {
 	HttpEntity<String> entity;
 	
 	public ThematicSite(){
-		ExecShare execShare = ExecShare.getInstance();
+		ExecShareImpl execShare = (ExecShareImpl) ExecShareImpl.getInstance();
 		restTemplate = execShare.getRestTemplate();
     	HttpHeaders headers = new HttpHeaders();
     	headers.setContentType(MediaType.APPLICATION_JSON);
@@ -77,7 +77,7 @@ public class ThematicSite extends ResourceSupport {
 	}
 	
 	public void publishThematicSite() {
-		class Local {};
+		/*class Local {};
 		Method currentMethod = Local.class.getEnclosingMethod();
 		String currentMethodName = currentMethod.getName();
 		
@@ -97,7 +97,7 @@ public class ThematicSite extends ResourceSupport {
         
         HttpEntity<ThematicSite> entity = new HttpEntity<ThematicSite>(this,headers);
 		
-		ResponseEntity<ResourceSupport> response = restTemplate.exchange(href, HttpMethod.POST, entity, ResourceSupport.class);
+		ResponseEntity<ResourceSupport> response = restTemplate.exchange(href, HttpMethod.POST, entity, ResourceSupport.class);*/
 		
 	}
 

@@ -34,7 +34,7 @@ public class Author extends ResourceSupport {
 
 	
 	public Author(){
-		ExecShare execShare = ExecShare.getInstance();
+		ExecShareImpl execShare = (ExecShareImpl) ExecShareImpl.getInstance();
 		restTemplate = execShare.getRestTemplate();
     	HttpHeaders headers = new HttpHeaders();
     	headers.setContentType(MediaType.APPLICATION_JSON);
@@ -116,7 +116,7 @@ public class Author extends ResourceSupport {
 		HttpHeaders headers = new HttpHeaders();
     	headers.setContentType(MediaType.APPLICATION_JSON);
     	
-    	ExecShareConnexionFactory connexionFactory = ExecShare.getInstance().getExecShareConnexionFactory();
+    	ExecShareConnexionFactory connexionFactory = ((ExecShareImpl)ExecShareImpl.getInstance()).getExecShareConnexionFactory();
     	//RestTemplate restTemplate = ExecShare.getInstance().getRestTemplate();
     	String auth = connexionFactory.getUserName() + ":" + connexionFactory.getPassword();
 

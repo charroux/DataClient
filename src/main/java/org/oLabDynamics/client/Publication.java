@@ -45,7 +45,7 @@ public class Publication extends ResourceSupport {
 	
 
 	public Publication(){
-		ExecShare execShare = ExecShare.getInstance();
+		ExecShareImpl execShare = (ExecShareImpl) ExecShareImpl.getInstance();
 		restTemplate = execShare.getRestTemplate();
     	HttpHeaders headers = new HttpHeaders();
     	headers.setContentType(MediaType.APPLICATION_JSON);
@@ -180,15 +180,17 @@ public class Publication extends ResourceSupport {
 		Method currentMethod = Local.class.getEnclosingMethod();
 		String currentMethodName = currentMethod.getName();
 		
-		Hashtable<String, Link> relToLink = ExecShare.getRelToLink();
-		Link link = relToLink.get(currentMethodName);
-		String href = link.getHref();	
+		ExecShareImpl execShare = (ExecShareImpl) ExecShareImpl.getInstance();
+		
+		String href = execShare.discoverLink(currentMethodName).getHref();
+		/*Link link = relToLink.get(currentMethodName);
+		String href = link.getHref();*/	
 		
 		HttpHeaders headers = new HttpHeaders();
     	headers.setContentType(MediaType.APPLICATION_JSON);
     	
-    	ExecShareConnexionFactory connexionFactory = ExecShare.getInstance().getExecShareConnexionFactory();
-    	RestTemplate restTemplate = ExecShare.getInstance().getRestTemplate();
+    	ExecShareConnexionFactory connexionFactory = ((ExecShareImpl)ExecShareImpl.getInstance()).getExecShareConnexionFactory();
+    	RestTemplate restTemplate = execShare.getRestTemplate();
     	String auth = connexionFactory.getUserName() + ":" + connexionFactory.getPassword();
 
     	byte[] encodedAuthorisation = Base64.encode(auth.getBytes());
@@ -218,8 +220,9 @@ public class Publication extends ResourceSupport {
 		HttpHeaders headers = new HttpHeaders();
     	headers.setContentType(MediaType.APPLICATION_JSON);
     	
-    	ExecShareConnexionFactory connexionFactory = ExecShare.getInstance().getExecShareConnexionFactory();
-    	RestTemplate restTemplate = ExecShare.getInstance().getRestTemplate();
+    	ExecShareImpl execShare = (ExecShareImpl) ExecShareImpl.getInstance();
+    	ExecShareConnexionFactory connexionFactory = execShare.getExecShareConnexionFactory();
+    	RestTemplate restTemplate = execShare.getRestTemplate();
     	String auth = connexionFactory.getUserName() + ":" + connexionFactory.getPassword();
 
     	byte[] encodedAuthorisation = Base64.encode(auth.getBytes());

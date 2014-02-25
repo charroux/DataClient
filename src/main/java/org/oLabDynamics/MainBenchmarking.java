@@ -9,6 +9,7 @@ import org.oLabDynamics.client.Code;
 import org.oLabDynamics.client.CompanionSite;
 import org.oLabDynamics.client.ExecShare;
 import org.oLabDynamics.client.ExecShareConnexionFactory;
+import org.oLabDynamics.client.ExecShareImpl;
 import org.oLabDynamics.client.InputData;
 import org.oLabDynamics.client.OutputData;
 import org.oLabDynamics.client.Program;
@@ -36,7 +37,7 @@ public class MainBenchmarking {
 		
 		try{
 			
-			ExecShare execShare = ExecShare.getInstance();
+			ExecShare execShare = ExecShareImpl.getInstance();
 					
 			Query query = new Query("author");
 			query.addFilter("name", Query.FilterOperator.EQUAL, "Tintin");

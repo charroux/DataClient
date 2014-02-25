@@ -44,7 +44,7 @@ public class CompanionSite extends ResourceSupport{
 	HttpEntity<String> entity;
 	
 	public CompanionSite(){
-		ExecShare execShare = ExecShare.getInstance();
+		ExecShareImpl execShare = (ExecShareImpl) ExecShareImpl.getInstance();
 		restTemplate = execShare.getRestTemplate();
     	HttpHeaders headers = new HttpHeaders();
     	headers.setContentType(MediaType.APPLICATION_JSON);

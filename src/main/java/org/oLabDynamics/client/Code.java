@@ -36,7 +36,7 @@ public class Code extends ResourceSupport {
 	HttpEntity<String> entity;
 	
 	public Code(){
-		ExecShare execShare = ExecShare.getInstance();
+		ExecShareImpl execShare = (ExecShareImpl) ExecShareImpl.getInstance();
 		restTemplate = execShare.getRestTemplate();
     	HttpHeaders headers = new HttpHeaders();
     	headers.setContentType(MediaType.APPLICATION_JSON);
