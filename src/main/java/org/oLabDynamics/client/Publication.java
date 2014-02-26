@@ -215,7 +215,7 @@ public class Publication extends ResourceSupport {
     	byte[] encodedAuthorisation = Base64.encode(auth.getBytes());
         headers.add("Authorization", "Basic " + new String(encodedAuthorisation));
         
-        if(super.getLinks().size() == 0){	// this is a new author 
+        if(super.getLinks().size() == 0){	// this is a new publication 
         	
         	String className = this.getClass().getName();
     		className = className.substring(className.lastIndexOf(".")+1);
@@ -237,7 +237,39 @@ public class Publication extends ResourceSupport {
 	
 		restTemplate.exchange(href, HttpMethod.PUT, entity, Publication.class);
 		
-		if(companionSite != null){
+		if(authors != null){
+			
+			for(int i=0; i<authors.size(); i++){
+				Author author = authors.get(i);
+				
+				 if(author.getLinks().size() == 0){	// this is a new author 
+			        	
+			            String className = author.getClass().getName();
+			    		className = className.substring(className.lastIndexOf(".")+1);
+			    		className = className.substring(0, 1).toLowerCase().concat(className.substring(1));
+			    		className = className.substring(className.lastIndexOf(".")+1).toLowerCase();
+			    		
+			            href = execShare.discoverLink(className).getHref() + "/new";
+
+			        	entity = new HttpEntity(headers);
+			        	
+			        	// get a new author : new id, links, rel...
+			        	ResponseEntity<Author> response = restTemplate.exchange(href, HttpMethod.GET, entity, Author.class);
+			        	ResourceSupport resource = response.getBody();
+			  
+			        	author.add(resource.getLinks());      	
+			        }
+			}
+			
+			href = super.getLink("authors").getHref();
+			
+			HttpEntity<Author[]> entities = new HttpEntity<Author[]>(authors.toArray(new Author[0]),headers);
+			
+			ParameterizedTypeReference<Author[]> typeRef = new ParameterizedTypeReference<Author[]>() {};
+			restTemplate.exchange(href, HttpMethod.PUT, entities, typeRef);
+		}
+		
+/*		if(companionSite != null){
 			
 			if(companionSite.getLinks().size() == 0){	// this is a new companionSite
 				
@@ -257,11 +289,13 @@ public class Publication extends ResourceSupport {
 			
 			href = super.getLink("companionSite").getHref();
 			
+			System.out.println(href);
+			
 			HttpEntity<CompanionSite> entity1 = new HttpEntity<CompanionSite>(companionSite,headers);
 			
 			restTemplate.exchange(href, HttpMethod.PUT, entity, CompanionSite.class);
 			
-		}		
+		}*/		
 	}
 
 	@Override

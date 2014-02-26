@@ -40,7 +40,7 @@ public class MainBenchmarking {
 			ExecShare execShare = ExecShareImpl.getInstance();
 					
 			Query query = new Query("author");
-			query.addFilter("name", Query.FilterOperator.EQUAL, "Tintin");
+			query.addFilter("firstName", Query.FilterOperator.EQUAL, "Tintin");
 			List<Author> authors = execShare.prepare(query);
 			Author author = authors.get(0);
 			System.out.println(author);

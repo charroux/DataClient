@@ -69,9 +69,80 @@ public class MainCreateNewPublication {
 			query.addFilter("firstName", Query.FilterOperator.EQUAL, "Castafiore");
 			List<Author> authors = execShare.prepare(query);
 			Author author1 = authors.get(0);
-			System.out.println("author1=" + author1);
+			System.out.println(author1);
+		
+			Publication publication1 = author1.getPublications().get(0);
+			System.out.println(publication1);
+			
+		
+			query = new Query("publication");
+			query.addFilter("title", Query.FilterOperator.EQUAL, "Une nouvelle publication");
+			List<Publication> publications = execShare.prepare(query);
+			Publication publication2 = publications.get(0);
+			System.out.println(publication2);
+		
+			Author author2 = publication2.getAuthors().get(0);
+			System.out.println(author2);
+		
+			if(author1.equals(author2)){
+				System.out.println("les deux authors sont égales");
+			} else{
+				System.out.println("probleme car les 2 authors sont différentes");
+			}
+			
+			if(publication1.equals(publication2)){
+				System.out.println("les deux publis sont égales");
+			} else{
+				System.out.println("probleme car les 2 publis sont différentes");
+			}
 			
 			
+			
+			author = new Author();
+			author.setFirstName("Dupont");
+			author.setLastName("Albert");
+			
+			publication = new Publication();
+			publication.setTitle("Une publication a la con");
+			publication.setPublicationType(PublicationType.WORKING_PAPER);
+			publication.addAuthor(author, 1);
+			
+			execShare = ExecShareImpl.getInstance();
+			
+			execShare.persist(publication);
+			execShare.persist(author);
+			
+			
+			query = new Query("author");
+			query.addFilter("firstName", Query.FilterOperator.EQUAL, "Castafiore");
+			authors = execShare.prepare(query);
+			author1 = authors.get(0);
+			System.out.println(author1);
+		
+			publication1 = author1.getPublications().get(0);
+			System.out.println(publication1);
+			
+		
+			query = new Query("publication");
+			query.addFilter("title", Query.FilterOperator.EQUAL, "Une nouvelle publication");
+			publications = execShare.prepare(query);
+			publication2 = publications.get(0);
+			System.out.println(publication2);
+		
+			author2 = publication2.getAuthors().get(0);
+			System.out.println(author2);
+		
+			if(author1.equals(author2)){
+				System.out.println("les deux authors sont égales");
+			} else{
+				System.out.println("probleme car les 2 authors sont différentes");
+			}
+			
+			if(publication1.equals(publication2)){
+				System.out.println("les deux publis sont égales");
+			} else{
+				System.out.println("probleme car les 2 publis sont différentes");
+			}
 			
 			//publication.save();
 			
