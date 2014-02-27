@@ -203,7 +203,7 @@ public class Publication extends ResourceSupport {
 		
 	}
 	
-	public void save(){
+	void save(){
 		
 		HttpHeaders headers = new HttpHeaders();
     	headers.setContentType(MediaType.APPLICATION_JSON);
@@ -247,7 +247,7 @@ public class Publication extends ResourceSupport {
 			            String className = author.getClass().getName();
 			    		className = className.substring(className.lastIndexOf(".")+1);
 			    		className = className.substring(0, 1).toLowerCase().concat(className.substring(1));
-			    		className = className.substring(className.lastIndexOf(".")+1).toLowerCase();
+			    		//className = className.substring(className.lastIndexOf(".")+1).toLowerCase();
 			    		
 			            href = execShare.discoverLink(className).getHref() + "/new";
 
@@ -269,7 +269,7 @@ public class Publication extends ResourceSupport {
 			restTemplate.exchange(href, HttpMethod.PUT, entities, typeRef);
 		}
 		
-/*		if(companionSite != null){
+		if(companionSite != null){
 			
 			if(companionSite.getLinks().size() == 0){	// this is a new companionSite
 				
@@ -280,7 +280,7 @@ public class Publication extends ResourceSupport {
 			     href = execShare.discoverLink(className).getHref() + "/new";
 			     entity = new HttpEntity(headers);
 		        	
-		         // get a new publication : new id, links, rel...
+		         // get a new companionSite : new id, links, rel...
 			     ResponseEntity<CompanionSite> response = restTemplate.exchange(href, HttpMethod.GET, entity, CompanionSite.class);
 			     ResourceSupport resource = response.getBody();
 			  
@@ -289,13 +289,11 @@ public class Publication extends ResourceSupport {
 			
 			href = super.getLink("companionSite").getHref();
 			
-			System.out.println(href);
-			
 			HttpEntity<CompanionSite> entity1 = new HttpEntity<CompanionSite>(companionSite,headers);
 			
-			restTemplate.exchange(href, HttpMethod.PUT, entity, CompanionSite.class);
+			restTemplate.exchange(href, HttpMethod.PUT, entity1, CompanionSite.class);
 			
-		}*/		
+		}		
 	}
 
 	@Override

@@ -1,5 +1,9 @@
 package org.oLabDynamics.client;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -25,10 +29,31 @@ import org.springframework.stereotype.Component;
 
 public interface ExecShare<T> {
 		
-	public Link discoverLink(String rel);
+	enum Format{
+		JSON
+	}
 	
 	public List<T> prepare(Query query) throws Exception;
 	
 	public void persist(ResourceSupport resourceSupport);
 	
+	public List<OutputData> run(Code code, List<InputData> inputs) throws ExecutorException;
+	
+	public List<OutputData> run(Code code) throws ExecutorException;
+	
+	public void exportInputData(List<InputData> inputs, FileOutputStream file, Format format);
+	
+	public void exportInputData(List<InputData> inputs, OutputStream outputStream, Format format);
+	
+	public List<InputData> importInputData(FileInputStream file, Format format);
+	
+	public List<InputData> importInputData(InputStream outputStream, Format format);	
+
+	public void exportOutputData(List<OutputData> outputs, FileOutputStream file, Format format);
+	
+	public void exportOutputData(List<OutputData> outputs, OutputStream outputStream, Format format);
+
+	public List<OutputData> importOutputData(FileInputStream file, Format format);
+	
+	public List<OutputData> importOutputData(InputStream outputStream, Format format);	
 }

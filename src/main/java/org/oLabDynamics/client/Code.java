@@ -23,8 +23,13 @@ import org.springframework.web.client.RestTemplate;
 
 public class Code extends ResourceSupport {
 	
+	@JsonIgnore
 	List<CompanionSite> companionSites;
+	
+	@JsonIgnore
 	List<InputData> inputs;
+	
+	@JsonIgnore
 	List<OutputData> outputs;
 	
 	String description;
@@ -204,7 +209,7 @@ public class Code extends ResourceSupport {
 		// TODO Auto-generated method stub	
 	}
 
-	public Set<Configuration> getConfigurations() {
+	/*public Set<Configuration> getConfigurations() {
 		class Local {};
 		Method currentMethod = Local.class.getEnclosingMethod();
 		String currentMethodName = currentMethod.getName();
@@ -240,6 +245,136 @@ public class Code extends ResourceSupport {
 		ResponseEntity<Set<Configuration>> response = restTemplate.exchange(href, HttpMethod.GET, entity, typeRef);
 
 		return response.getBody();
+	}*/
+	
+	void save(){
+		
+		HttpHeaders headers = new HttpHeaders();
+    	headers.setContentType(MediaType.APPLICATION_JSON);
+    	
+    	ExecShareImpl execShare = (ExecShareImpl) ExecShareImpl.getInstance();
+    	ExecShareConnexionFactory connexionFactory = execShare.getExecShareConnexionFactory();
+    	String auth = connexionFactory.getUserName() + ":" + connexionFactory.getPassword();
+
+    	byte[] encodedAuthorisation = Base64.encode(auth.getBytes());
+        headers.add("Authorization", "Basic " + new String(encodedAuthorisation));
+        
+        if(super.getLinks().size() == 0){	// this is a new code 
+        	
+            String className = this.getClass().getName();
+    		className = className.substring(className.lastIndexOf(".")+1);
+    		className = className.substring(0, 1).toLowerCase().concat(className.substring(1));
+    		
+            String href = execShare.discoverLink(className).getHref() + "/new";
+
+        	HttpEntity entity = new HttpEntity(headers);
+        	
+        	// get a new code : new id, links, rel...
+        	ResponseEntity<Code> response = restTemplate.exchange(href, HttpMethod.GET, entity, Code.class);
+        	ResourceSupport resource = response.getBody();
+  
+        	super.add(resource.getLinks());      	
+        }
+        
+        String href = super.getLink("self").getHref();
+		HttpEntity<Code> entity = new HttpEntity<Code>(this,headers);
+	
+		restTemplate.exchange(href, HttpMethod.PUT, entity, Code.class);
+		
+		if(companionSites != null){
+			
+			for(int i=0; i<companionSites.size(); i++){
+				CompanionSite companionSite = companionSites.get(i);
+				
+				 if(companionSite.getLinks().size() == 0){	// this is a new companionSite 
+			        	
+			            String className = companionSite.getClass().getName();
+			    		className = className.substring(className.lastIndexOf(".")+1);
+			    		className = className.substring(0, 1).toLowerCase().concat(className.substring(1));
+			    		//className = className.substring(className.lastIndexOf(".")+1).toLowerCase();
+			    		
+			            href = execShare.discoverLink(className).getHref() + "/new";
+
+			        	entity = new HttpEntity(headers);
+			        	
+			        	// get a new publication : new id, links, rel...
+			        	ResponseEntity<CompanionSite> response = restTemplate.exchange(href, HttpMethod.GET, entity, CompanionSite.class);
+			        	ResourceSupport resource = response.getBody();
+			  
+			        	companionSite.add(resource.getLinks());      	
+			        }
+			}
+			
+			href = super.getLink("companionSites").getHref();
+			
+			HttpEntity<CompanionSite[]> entities = new HttpEntity<CompanionSite[]>(companionSites.toArray(new CompanionSite[0]),headers);
+			
+			ParameterizedTypeReference<CompanionSite[]> typeRef = new ParameterizedTypeReference<CompanionSite[]>() {};
+			restTemplate.exchange(href, HttpMethod.PUT, entities, typeRef);
+		}
+		
+		if(inputs != null){
+			
+			for(int i=0; i<inputs.size(); i++){
+				InputData input = inputs.get(i);
+				
+				 if(input.getLinks().size() == 0){	// this is a new input 
+			        	
+			            String className = input.getClass().getName();
+			    		className = className.substring(className.lastIndexOf(".")+1);
+			    		className = className.substring(0, 1).toLowerCase().concat(className.substring(1));
+			    		//className = className.substring(className.lastIndexOf(".")+1).toLowerCase();
+			    		
+			            href = execShare.discoverLink(className).getHref() + "/new";
+
+			        	entity = new HttpEntity(headers);
+			        	
+			        	// get a new input : new id, links, rel...
+			        	ResponseEntity<InputData> response = restTemplate.exchange(href, HttpMethod.GET, entity, InputData.class);
+			        	ResourceSupport resource = response.getBody();
+			  
+			        	input.add(resource.getLinks());      	
+			        }
+			}
+			
+			href = super.getLink("inputs").getHref();
+			
+			HttpEntity<InputData[]> entities = new HttpEntity<InputData[]>(inputs.toArray(new InputData[0]),headers);
+			
+			ParameterizedTypeReference<InputData[]> typeRef = new ParameterizedTypeReference<InputData[]>() {};
+			restTemplate.exchange(href, HttpMethod.PUT, entities, typeRef);
+		}
+		
+		if(outputs != null){
+			
+			for(int i=0; i<outputs.size(); i++){
+				OutputData output = outputs.get(i);
+				
+				 if(output.getLinks().size() == 0){	// this is a new output 
+			        	
+			            String className = output.getClass().getName();
+			    		className = className.substring(className.lastIndexOf(".")+1);
+			    		className = className.substring(0, 1).toLowerCase().concat(className.substring(1));
+			    		
+			            href = execShare.discoverLink(className).getHref() + "/new";
+
+			        	entity = new HttpEntity(headers);
+			        	
+			        	// get a new output : new id, links, rel...
+			        	ResponseEntity<OutputData> response = restTemplate.exchange(href, HttpMethod.GET, entity, OutputData.class);
+			        	ResourceSupport resource = response.getBody();
+			  
+			        	output.add(resource.getLinks());      	
+			        }
+			}
+			
+			href = super.getLink("outputs").getHref();
+			
+			HttpEntity<OutputData[]> entities = new HttpEntity<OutputData[]>(outputs.toArray(new OutputData[0]),headers);
+			
+			ParameterizedTypeReference<OutputData[]> typeRef = new ParameterizedTypeReference<OutputData[]>() {};
+			restTemplate.exchange(href, HttpMethod.PUT, entities, typeRef);
+		}
 	}
 
 	@Override

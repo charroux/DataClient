@@ -14,6 +14,7 @@ import org.oLabDynamics.client.ExecShareImpl;
 import org.oLabDynamics.client.InputData;
 import org.oLabDynamics.client.Linux;
 import org.oLabDynamics.client.OperatingSystem;
+import org.oLabDynamics.client.OutputData;
 import org.oLabDynamics.client.Program;
 import org.oLabDynamics.client.Publication;
 import org.oLabDynamics.client.Query;
@@ -59,10 +60,27 @@ public class MainCreateNewPublication {
 			CompanionSite companionSite = new CompanionSite();
 			publication.setCompanionSite(companionSite);
 			
+			Code code = new Code();
+			code.setDescription("ceci est un code");	
+			code.addCompanionSite(companionSite);
+			
+			InputData input = new InputData();
+			input.setDescription("Ceci est une entrée");
+			code.addInput(input);
+			
+			OutputData output = new OutputData();
+			output.setDescription("Ceci est une sortie");
+			code.addOutput(output);
+			
+			
 			ExecShare execShare = ExecShareImpl.getInstance();
 			
 			execShare.persist(author);
 			execShare.persist(publication);
+			execShare.persist(companionSite);
+			execShare.persist(code);
+			execShare.persist(input);
+			execShare.persist(output);
 			
 			
 			Query query = new Query("author");
@@ -74,11 +92,42 @@ public class MainCreateNewPublication {
 			Publication publication1 = author1.getPublications().get(0);
 			System.out.println(publication1);
 			
-		
+			CompanionSite companionSite1 = publication1.getCompanionSite();
+			System.out.println(companionSite1);
+			
+			Code code1 = companionSite1.getCode();
+			CompanionSite companionSite2 = code1.getCompanionSites().get(0);
+			System.out.println(companionSite2);
+			
+			if(companionSite1.equals(companionSite2)){
+				System.out.println("les deux companionSite sont égales");
+			} else{
+				System.out.println("probleme car les 2 companionSite sont différentes");
+			}
+			
+			InputData inputData = code1.getInputs().get(0);
+			Code code3 = inputData.getCode();
+			
+			if(code1.equals(code3)){
+				System.out.println("les deux codes sont égales");
+			} else{
+				System.out.println("probleme car les 2 code sont différentes");
+			}
+			
+			OutputData outputData = code3.getOutputs().get(0);
+			
+			Publication publication2 = companionSite1.getPublication();
+			
+			if(publication1.equals(publication2)){
+				System.out.println("les deux publis sont égales");
+			} else{
+				System.out.println("probleme car les 2 publis sont différentes");
+			}
+			
 			query = new Query("publication");
 			query.addFilter("title", Query.FilterOperator.EQUAL, "Une nouvelle publication");
 			List<Publication> publications = execShare.prepare(query);
-			Publication publication2 = publications.get(0);
+			publication2 = publications.get(0);
 			System.out.println(publication2);
 		
 			Author author2 = publication2.getAuthors().get(0);
@@ -96,7 +145,12 @@ public class MainCreateNewPublication {
 				System.out.println("probleme car les 2 publis sont différentes");
 			}
 			
-			
+			OutputData outputData1 = publication1.getCompanionSite().getCode().getOutputs().get(0);
+			if(outputData.equals(outputData1)){
+				System.out.println("les deux outputData sont égales");
+			} else{
+				System.out.println("probleme car les 2 outputData sont différentes");
+			}
 			
 			author = new Author();
 			author.setFirstName("Dupont");

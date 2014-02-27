@@ -1,5 +1,9 @@
 package org.oLabDynamics.client;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -39,8 +43,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ExecShareImpl<T> implements ExecShare<T>{
-	
-	//static Hashtable<String, Link> relToLink = new Hashtable<String, Link>();
 	
 	static ExecShareImpl execShare;
 	static ResourceSupport entryPoint;
@@ -159,7 +161,6 @@ public class ExecShareImpl<T> implements ExecShare<T>{
     	
 	}
 
-	@Override
 	public Link discoverLink(String rel) {
 		return entryPoint.getLink(rel);
 	}
@@ -168,11 +169,106 @@ public class ExecShareImpl<T> implements ExecShare<T>{
 	public void persist(ResourceSupport resourceSupport) {
 
 		if(resourceSupport instanceof Author){
+			
 			((Author)resourceSupport).save();
+			
 		} else if(resourceSupport instanceof Publication){
+			
 			((Publication)resourceSupport).save();
+			
+		} else if(resourceSupport instanceof CompanionSite){
+			
+			((CompanionSite)resourceSupport).save();
+			
+		} else if(resourceSupport instanceof Code){
+			
+			((Code)resourceSupport).save();
+			
+		} else if(resourceSupport instanceof InputData){
+			
+			((InputData)resourceSupport).save();
+			
+		} else if(resourceSupport instanceof OutputData){
+			
+			((OutputData)resourceSupport).save();
+			
 		} 
 		
 	}
+
+	@Override
+	public List<OutputData> run(Code code, List<InputData> inputs) throws ExecutorException {
+		if(inputs == null){
+			throw new ExecutorException("No input data");
+		}
+		return null;
+	}
+
+	@Override
+	public List<OutputData> run(Code code) throws ExecutorException {
+		List<InputData> inputs = code.getInputs();
+		return run(code, inputs);
+	}
+
+	@Override
+	public void exportInputData(List<InputData> inputs, FileOutputStream file,
+			org.oLabDynamics.client.ExecShare.Format format) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void exportInputData(List<InputData> inputs,
+			OutputStream outputStream,
+			org.oLabDynamics.client.ExecShare.Format format) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<InputData> importInputData(FileInputStream file,
+			org.oLabDynamics.client.ExecShare.Format format) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<InputData> importInputData(InputStream outputStream,
+			org.oLabDynamics.client.ExecShare.Format format) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void exportOutputData(List<OutputData> outputs,
+			FileOutputStream file,
+			org.oLabDynamics.client.ExecShare.Format format) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void exportOutputData(List<OutputData> outputs,
+			OutputStream outputStream,
+			org.oLabDynamics.client.ExecShare.Format format) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<OutputData> importOutputData(FileInputStream file,
+			org.oLabDynamics.client.ExecShare.Format format) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<OutputData> importOutputData(InputStream outputStream,
+			org.oLabDynamics.client.ExecShare.Format format) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
 
 }

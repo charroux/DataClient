@@ -22,7 +22,9 @@ public class InputData extends ResourceSupport {
 	@JsonIgnore
 	Code code;
 	
+	@JsonIgnore
 	RestTemplate restTemplate;
+	@JsonIgnore
 	HttpEntity<String> entity;
 	
 	public InputData(){
@@ -70,6 +72,67 @@ public class InputData extends ResourceSupport {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	void save(){
+		
+		HttpHeaders headers = new HttpHeaders();
+    	headers.setContentType(MediaType.APPLICATION_JSON);
+    	
+    	ExecShareImpl execShare = (ExecShareImpl) ExecShareImpl.getInstance();
+    	ExecShareConnexionFactory connexionFactory = execShare.getExecShareConnexionFactory();
+    	String auth = connexionFactory.getUserName() + ":" + connexionFactory.getPassword();
+
+    	byte[] encodedAuthorisation = Base64.encode(auth.getBytes());
+        headers.add("Authorization", "Basic " + new String(encodedAuthorisation));
+        
+        if(super.getLinks().size() == 0){	// this is a new input 
+        	
+        	String className = this.getClass().getName();
+    		className = className.substring(className.lastIndexOf(".")+1);
+    		className = className.substring(0, 1).toLowerCase().concat(className.substring(1));
+    		
+            String href = execShare.discoverLink(className).getHref() + "/new";
+
+        	HttpEntity entity = new HttpEntity(headers);
+        	
+        	// get a new input : new id, links, rel...
+        	ResponseEntity<InputData> response = restTemplate.exchange(href, HttpMethod.GET, entity, InputData.class);
+        	ResourceSupport resource = response.getBody();
+  
+        	super.add(resource.getLinks());      	
+        }
+        
+        String href = super.getLink("self").getHref();
+		HttpEntity<InputData> entity = new HttpEntity<InputData>(this,headers);
+	
+		restTemplate.exchange(href, HttpMethod.PUT, entity, InputData.class);		
+		
+		if(code != null){
+			
+			if(code.getLinks().size() == 0){	// this is a new code
+				
+				String className = code.getClass().getName();
+		    	className = className.substring(className.lastIndexOf(".")+1);
+		    	className = className.substring(0, 1).toLowerCase().concat(className.substring(1));
+					
+			     href = execShare.discoverLink(className).getHref() + "/new";
+			     entity = new HttpEntity(headers);
+		        	
+		         // get a new code : new id, links, rel...
+			     ResponseEntity<Code> response = restTemplate.exchange(href, HttpMethod.GET, entity, Code.class);
+			     ResourceSupport resource = response.getBody();
+			  
+			     code.add(resource.getLinks()); 			     
+			}
+			
+			href = super.getLink("code").getHref();
+			
+			HttpEntity<Code> entity1 = new HttpEntity<Code>(code,headers);
+			
+			restTemplate.exchange(href, HttpMethod.PUT, entity1, Code.class);
+			
+		}
 	}
 
 	@Override
