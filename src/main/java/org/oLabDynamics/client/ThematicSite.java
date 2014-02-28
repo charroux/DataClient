@@ -101,6 +101,72 @@ public class ThematicSite extends ResourceSupport {
 		ResponseEntity<ResourceSupport> response = restTemplate.exchange(href, HttpMethod.POST, entity, ResourceSupport.class);*/
 		
 	}
+	
+	void save(){
+		
+		HttpHeaders headers = new HttpHeaders();
+    	headers.setContentType(MediaType.APPLICATION_JSON);
+    	
+    	ExecShareImpl execShare = (ExecShareImpl) ExecShareImpl.getInstance();
+    	ExecShareConnexionFactory connexionFactory = execShare.getExecShareConnexionFactory();
+    	String auth = connexionFactory.getUserName() + ":" + connexionFactory.getPassword();
+
+    	byte[] encodedAuthorisation = Base64.encode(auth.getBytes());
+        headers.add("Authorization", "Basic " + new String(encodedAuthorisation));
+        
+        if(super.getLinks().size() == 0){	// this is a new thematicSite 
+        	
+            String className = this.getClass().getName();
+    		className = className.substring(className.lastIndexOf(".")+1);
+    		className = className.substring(0, 1).toLowerCase().concat(className.substring(1));
+    		
+            String href = execShare.discoverLink(className).getHref() + "/new";
+
+        	HttpEntity entity = new HttpEntity(headers);
+        	
+        	// get a new thematicSite : new id, links, rel...
+        	ResponseEntity<ThematicSite> response = restTemplate.exchange(href, HttpMethod.GET, entity, ThematicSite.class);
+        	ResourceSupport resource = response.getBody();
+  
+        	super.add(resource.getLinks());      	
+        }
+        
+        String href = super.getLink("self").getHref();
+		HttpEntity<ThematicSite> entity = new HttpEntity<ThematicSite>(this,headers);
+	
+		restTemplate.exchange(href, HttpMethod.PUT, entity, ThematicSite.class);
+		
+		if(companionSites != null){
+			
+			for(int i=0; i<companionSites.size(); i++){
+				CompanionSite companionSite = companionSites.get(i);
+				
+				 if(companionSite.getLinks().size() == 0){	// this is a new companionSite 
+			        	
+			            String className = companionSite.getClass().getName();
+			    		className = className.substring(className.lastIndexOf(".")+1);
+			    		className = className.substring(0, 1).toLowerCase().concat(className.substring(1));
+			    		
+			            href = execShare.discoverLink(className).getHref() + "/new";
+
+			        	entity = new HttpEntity(headers);
+			        	
+			        	// get a new companionSite : new id, links, rel...
+			        	ResponseEntity<CompanionSite> response = restTemplate.exchange(href, HttpMethod.GET, entity, CompanionSite.class);
+			        	ResourceSupport resource = response.getBody();
+			  
+			        	companionSite.add(resource.getLinks());      	
+			        }
+			}
+			
+			href = super.getLink("companionSites").getHref();
+			
+			HttpEntity<CompanionSite[]> entities = new HttpEntity<CompanionSite[]>(companionSites.toArray(new CompanionSite[0]),headers);
+			
+			ParameterizedTypeReference<CompanionSite[]> typeRef = new ParameterizedTypeReference<CompanionSite[]>() {};
+			restTemplate.exchange(href, HttpMethod.PUT, entities, typeRef);
+		}
+	}
 
 	@Override
 	public String toString() {

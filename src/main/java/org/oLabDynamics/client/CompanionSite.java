@@ -226,6 +226,37 @@ public class CompanionSite extends ResourceSupport{
 			restTemplate.exchange(href, HttpMethod.PUT, entity1, Code.class);
 			
 		}
+		
+		if(thematicSites != null){
+			
+			for(int i=0; i<thematicSites.size(); i++){
+				ThematicSite thematicSite = thematicSites.get(i);
+				
+				 if(thematicSite.getLinks().size() == 0){	// this is a new thematicSite 
+			        	
+			            String className = thematicSite.getClass().getName();
+			    		className = className.substring(className.lastIndexOf(".")+1);
+			    		className = className.substring(0, 1).toLowerCase().concat(className.substring(1));
+			    		
+			            href = execShare.discoverLink(className).getHref() + "/new";
+
+			        	entity = new HttpEntity(headers);
+			        	
+			        	// get a new thematicSite : new id, links, rel...
+			        	ResponseEntity<ThematicSite> response = restTemplate.exchange(href, HttpMethod.GET, entity, ThematicSite.class);
+			        	ResourceSupport resource = response.getBody();
+			  
+			        	thematicSite.add(resource.getLinks());      	
+			        }
+			}
+			
+			href = super.getLink("thematicSites").getHref();
+			
+			HttpEntity<ThematicSite[]> entities = new HttpEntity<ThematicSite[]>(thematicSites.toArray(new ThematicSite[0]),headers);
+			
+			ParameterizedTypeReference<CompanionSite[]> typeRef = new ParameterizedTypeReference<CompanionSite[]>() {};
+			restTemplate.exchange(href, HttpMethod.PUT, entities, typeRef);
+		}
 	}
 
 	@Override

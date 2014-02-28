@@ -60,6 +60,9 @@ public class MainCreateNewPublication {
 			CompanionSite companionSite = new CompanionSite();
 			publication.setCompanionSite(companionSite);
 			
+			ThematicSite thematicSite = new ThematicSite();
+			thematicSite.addCompanionSite(companionSite);
+			
 			Code code = new Code();
 			code.setDescription("ceci est un code");	
 			code.addCompanionSite(companionSite);
@@ -81,6 +84,7 @@ public class MainCreateNewPublication {
 			execShare.persist(code);
 			execShare.persist(input);
 			execShare.persist(output);
+			execShare.persist(thematicSite);
 			
 			
 			Query query = new Query("author");
@@ -94,6 +98,17 @@ public class MainCreateNewPublication {
 			
 			CompanionSite companionSite1 = publication1.getCompanionSite();
 			System.out.println(companionSite1);
+			
+			ThematicSite thematicSite1 = companionSite1.getThematicSites().get(0);
+			System.out.println(thematicSite1);
+			
+			CompanionSite companionSite3 = thematicSite1.getCompanionSites().get(0);
+			
+			if(companionSite1.equals(companionSite3)){
+				System.out.println("les deux companionSite sont égales");
+			} else{
+				System.out.println("probleme car les 2 companionSite sont différentes");
+			}
 			
 			Code code1 = companionSite1.getCode();
 			CompanionSite companionSite2 = code1.getCompanionSites().get(0);

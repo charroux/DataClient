@@ -192,6 +192,10 @@ public class ExecShareImpl<T> implements ExecShare<T>{
 			
 			((OutputData)resourceSupport).save();
 			
+		} else if(resourceSupport instanceof ThematicSite){
+			
+			((ThematicSite)resourceSupport).save();
+			
 		} 
 		
 	}
