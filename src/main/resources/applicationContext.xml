@@ -29,7 +29,7 @@ http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 		<property name="location" value="classpath:execAndShare.properties"/>
 </bean>
 
-<bean id="execShare" class="org.oLabDynamics.client.ExecShareImpl">
+<bean id="execShare" class="org.oLabDynamics.client.data.ExecShareImpl">
 </bean>
 
 <bean id="execShareConnexionFactory" class="org.oLabDynamics.client.ExecShareConnexionFactory">

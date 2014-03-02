@@ -5,29 +5,22 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.oLabDynamics.client.Author;
-import org.oLabDynamics.client.Code;
-import org.oLabDynamics.client.CompanionSite;
-import org.oLabDynamics.client.Configuration;
 import org.oLabDynamics.client.ExecShare;
-import org.oLabDynamics.client.ExecShareImpl;
-import org.oLabDynamics.client.InputData;
-import org.oLabDynamics.client.Linux;
-import org.oLabDynamics.client.OperatingSystem;
-import org.oLabDynamics.client.OutputData;
-import org.oLabDynamics.client.Program;
-import org.oLabDynamics.client.Publication;
 import org.oLabDynamics.client.Query;
-import org.oLabDynamics.client.Publication.PublicationType;
 import org.oLabDynamics.client.Query.FilterOperator;
-import org.oLabDynamics.client.write.AuthorReadWrite;
-import org.oLabDynamics.client.write.CodeReadWrite;
-import org.oLabDynamics.client.write.CompanionSiteReadWrite;
-import org.oLabDynamics.client.write.InputDataReadWrite;
-import org.oLabDynamics.client.write.OutputDataReadWrite;
-import org.oLabDynamics.client.write.PublicationReadWrite;
-import org.oLabDynamics.client.ThematicSite;
-import org.oLabDynamics.client.UnsupportedConfigurationException;
+import org.oLabDynamics.client.data.Author;
+import org.oLabDynamics.client.data.Code;
+import org.oLabDynamics.client.data.CompanionSite;
+import org.oLabDynamics.client.data.Configuration;
+import org.oLabDynamics.client.data.ExecShareImpl;
+import org.oLabDynamics.client.data.InputData;
+import org.oLabDynamics.client.data.Linux;
+import org.oLabDynamics.client.data.OperatingSystem;
+import org.oLabDynamics.client.data.OutputData;
+import org.oLabDynamics.client.data.Program;
+import org.oLabDynamics.client.data.Publication;
+import org.oLabDynamics.client.data.ThematicSite;
+import org.oLabDynamics.client.data.Publication.PublicationType;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.hateoas.Link;
@@ -83,13 +76,13 @@ public class MainCreateNewPublication {
 			
 			ExecShare execShare = ExecShareImpl.getInstance();
 			
-			execShare.persist(author);
-			execShare.persist(publication);
-			execShare.persist(companionSite);
-			execShare.persist(code);
-			execShare.persist(input);
-			execShare.persist(output);
-			execShare.persist(thematicSite);
+			execShare.publish(author);
+			execShare.publish(publication);
+			execShare.publish(companionSite);
+			execShare.publish(code);
+			execShare.publish(input);
+			execShare.publish(output);
+			execShare.publish(thematicSite);
 			
 			
 			Query query = new Query("author");
@@ -183,8 +176,8 @@ public class MainCreateNewPublication {
 			
 			execShare = ExecShareImpl.getInstance();
 			
-			execShare.persist(publication);
-			execShare.persist(author);
+			execShare.publish(publication);
+			execShare.publish(author);
 			
 			
 			query = new Query("author");

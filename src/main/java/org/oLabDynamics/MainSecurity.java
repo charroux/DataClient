@@ -2,9 +2,9 @@ package org.oLabDynamics;
 
 import java.util.List;
 
-import org.oLabDynamics.client.Author;
-import org.oLabDynamics.client.CompanionSite;
 import org.oLabDynamics.client.EntryPoint;
+import org.oLabDynamics.client.data.Author;
+import org.oLabDynamics.client.data.CompanionSite;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.ParameterizedTypeReference;
