@@ -3,6 +3,11 @@ package org.oLabDynamics.client;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+/**
+ * 
+ * @author Benoit Charroux
+ *
+ */
 public class Query {
 	
 	class Filter{

@@ -1,5 +1,10 @@
 package org.oLabDynamics.client;
 
+/**
+ * 
+ * @author Benoit Charroux
+ *
+ */
 public class ServerException extends RuntimeException{
 
 	public ServerException() {

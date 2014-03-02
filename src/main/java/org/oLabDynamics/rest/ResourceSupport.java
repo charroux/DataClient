@@ -1,5 +1,10 @@
 package org.oLabDynamics.rest;
 
+/**
+ * 
+ * @author Benoit Charroux
+ *
+ */
 public class ResourceSupport extends org.springframework.hateoas.ResourceSupport{
 	
 	String typeOfResource;

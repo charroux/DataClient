@@ -2,6 +2,11 @@ package org.oLabDynamics.client;
 
 import org.oLabDynamics.rest.ResourceSupport;
 
+/**
+ * 
+ * @author Benoit Charroux
+ *
+ */
 public abstract class OperatingSystem extends ResourceSupport{
 	
 	String version;

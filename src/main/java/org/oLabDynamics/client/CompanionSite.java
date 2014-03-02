@@ -24,7 +24,9 @@ import org.springframework.web.client.RestTemplate;
 
 
 /**
- * Site
+ * 
+ * @author Benoit Charroux
+ *
  */
 
 public class CompanionSite extends ResourceSupport{

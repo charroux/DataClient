@@ -1,5 +1,10 @@
 package org.oLabDynamics.client;
 
+/**
+ * 
+ * @author Benoit Charroux
+ *
+ */
 public class Linux extends OperatingSystem{
 	
 	String distribution;

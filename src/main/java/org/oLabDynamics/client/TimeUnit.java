@@ -5,6 +5,12 @@ package org.oLabDynamics.client;
  * @author Benoit Charroux
  *
  */
-public class UnsupportedConfigurationException extends Exception {
+public enum TimeUnit {
+	
+	DAYS,
+	HOURS,
+	MILLISECONDS,
+	MINUTES,
+	SECONDS
 
 }

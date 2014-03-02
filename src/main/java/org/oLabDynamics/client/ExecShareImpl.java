@@ -37,15 +37,33 @@ import org.springframework.stereotype.Component;
  * Only the main entry point is needed : it is given by the property execAndShare.serverEntryPoint
  * contained into the property file named : execAndShare.properties
  * 
- * @author charroux
+ * @author Benoit Charroux
  *
  * @param <T>
  */
 @Component
 public class ExecShareImpl<T> implements ExecShare<T>{
 	
+	class CodeWithInputData{
+		Code code;
+		InputData[] inputs;
+		public Code getCode() {
+			return code;
+		}
+		public void setCode(Code code) {
+			this.code = code;
+		}
+		public InputData[] getInputs() {
+			return inputs;
+		}
+		public void setInputs(InputData[] inputs) {
+			this.inputs = inputs;
+		}
+		
+	}
+	
 	static ExecShareImpl execShare;
-	static ResourceSupport entryPoint;
+	static ResourceSupport entryPoints = new ResourceSupport();
 	
 	static{
 		ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
@@ -62,23 +80,20 @@ public class ExecShareImpl<T> implements ExecShare<T>{
     	
 		HttpEntity<String> entity = new HttpEntity<String>(headers);
 		
-		String serverEntryPoint = connexionFactory.getServerEntryPoint();
+		String[] serverEntryPoints = connexionFactory.getServerEntryPoints();
 		RestTemplate restTemplate = execShare.getRestTemplate();
 		
-		ResponseEntity<ResourceSupport> response = restTemplate.exchange(serverEntryPoint, HttpMethod.GET, entity, ResourceSupport.class);
-		HttpStatus statusCode = response.getStatusCode();
-		if(statusCode != HttpStatus.OK){
-			throw new ServerException("Unable to connect the server ! Check execAndShare.properties");
+		for(int i=0; i<serverEntryPoints.length; i++){
+			ResponseEntity<ResourceSupport> response = restTemplate.exchange(serverEntryPoints[i], HttpMethod.GET, entity, ResourceSupport.class);
+			HttpStatus statusCode = response.getStatusCode();
+			if(statusCode != HttpStatus.OK){
+				throw new ServerException("Unable to connect the server ! Check execAndShare.properties");
+			}
+			
+			ResourceSupport resourceSupport = response.getBody();
+	    	entryPoints.add(resourceSupport.getLinks());
+
 		}
-		
-    	entryPoint = response.getBody();
-    	
-    	/*List<Link> links = entryPoint.getLinks();
-    	Link link;
-    	for(int i=0; i<links.size(); i++){
-    		link = links.get(i);
-    		relToLink.put(link.getRel(), link);
-    	}*/
     	
 	}
 	
@@ -106,14 +121,6 @@ public class ExecShareImpl<T> implements ExecShare<T>{
 	public RestTemplate getRestTemplate() {
 		return restTemplate;
 	}
-
-	/*public static Hashtable<String, Link> getRelToLink() {
-		return relToLink;
-	}*/
-	
-/*	public static Link discoverLink(String rel){
-		return entryPoint.getLink(rel);
-	}*/
 
 	public List<T> prepare(Query query) throws Exception {
 		
@@ -162,7 +169,7 @@ public class ExecShareImpl<T> implements ExecShare<T>{
 	}
 
 	public Link discoverLink(String rel) {
-		return entryPoint.getLink(rel);
+		return entryPoints.getLink(rel);
 	}
 
 	@Override
@@ -201,19 +208,55 @@ public class ExecShareImpl<T> implements ExecShare<T>{
 	}
 
 	@Override
-	public List<OutputData> run(Code code, List<InputData> inputs) throws ExecutorException {
-		if(inputs == null){
-			throw new ExecutorException("No input data");
-		}
+	public RunningTask exec(Code code) throws ExecutorException {
+		
+		HttpHeaders headers = new HttpHeaders();
+    	headers.setContentType(MediaType.APPLICATION_JSON);
+    	
+    	ExecShareImpl execShare = (ExecShareImpl) ExecShareImpl.getInstance();
+    	ExecShareConnexionFactory connexionFactory = execShare.getExecShareConnexionFactory();
+    	String auth = connexionFactory.getUserName() + ":" + connexionFactory.getPassword();
+
+    	byte[] encodedAuthorisation = Base64.encode(auth.getBytes());
+        headers.add("Authorization", "Basic " + new String(encodedAuthorisation));
+        
+        CodeWithInputData codeWithInputData = new CodeWithInputData();
+        codeWithInputData.setCode(code);
+        InputData[] inputs = code.getInputs().toArray(new InputData[0]);
+        codeWithInputData.setInputs(inputs);
+        
+		HttpEntity<CodeWithInputData> entities = new HttpEntity<CodeWithInputData>(codeWithInputData, headers);
+		
+		String href = this.discoverLink("exec").getHref();
+		
+		ResponseEntity<RunningTask> response = restTemplate.exchange(href, HttpMethod.PUT, entities, RunningTask.class);
+		
+		RunningTask runningTask = response.getBody();
+		
+		return runningTask;
+	}
+
+	@Override
+	public void exec(Code code, ResultListener resultListener)
+			throws ExecutorException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public RunningTask exec(Code code, List<InputData> inputs)
+			throws ExecutorException {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<OutputData> run(Code code) throws ExecutorException {
-		List<InputData> inputs = code.getInputs();
-		return run(code, inputs);
+	public void exec(Code code, List<InputData> inputs,
+			ResultListener resultListener) throws ExecutorException {
+		// TODO Auto-generated method stub
+		
 	}
-
+	
 	@Override
 	public void exportInputData(List<InputData> inputs, FileOutputStream file,
 			org.oLabDynamics.client.ExecShare.Format format) {
@@ -273,6 +316,8 @@ public class ExecShareImpl<T> implements ExecShare<T>{
 		return null;
 	}
 
+	
 
+	
 
 }

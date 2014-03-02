@@ -3,6 +3,11 @@ package org.oLabDynamics.client;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 
+ * @author Benoit Charroux
+ *
+ */
 public class Program {
 	
 	Code code;

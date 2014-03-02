@@ -33,7 +33,7 @@ http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 </bean>
 
 <bean id="execShareConnexionFactory" class="org.oLabDynamics.client.ExecShareConnexionFactory">
-		<property name="serverEntryPoint" value="${execAndShare.serverEntryPoint}"/>
+		<property name="serverEntryPointsList" value="${execAndShare.serverEntryPointsList}"/>
 		<property name="userName" value="${execAndShare.userName}"/>
 		<property name="password" value="${execAndShare.password}"/>
 </bean>

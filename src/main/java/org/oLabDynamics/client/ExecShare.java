@@ -26,7 +26,12 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.stereotype.Component;
 
-
+/**
+ * 
+ * @author Benoit Charroux
+ *
+ * @param <T>
+ */
 public interface ExecShare<T> {
 		
 	enum Format{
@@ -37,9 +42,13 @@ public interface ExecShare<T> {
 	
 	public void persist(ResourceSupport resourceSupport);
 	
-	public List<OutputData> run(Code code, List<InputData> inputs) throws ExecutorException;
+	public RunningTask exec(Code code) throws ExecutorException;
 	
-	public List<OutputData> run(Code code) throws ExecutorException;
+	public void exec(Code code, ResultListener resultListener) throws ExecutorException;
+	
+	public RunningTask exec(Code code, List<InputData> inputs) throws ExecutorException;
+	
+	public void exec(Code code, List<InputData> inputs, ResultListener resultListener) throws ExecutorException;
 	
 	public void exportInputData(List<InputData> inputs, FileOutputStream file, Format format);
 	

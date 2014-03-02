@@ -7,6 +7,11 @@ import org.oLabDynamics.rest.ResourceSupport;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * 
+ * @author Benoit Charroux
+ *
+ */
 public class Configuration extends ResourceSupport {
 	
 	RestTemplate restTemplate;

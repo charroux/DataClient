@@ -15,6 +15,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * 
+ * @author Benoit Charroux
+ *
+ */
 public class InputData extends ResourceSupport {
 	
 	String description;

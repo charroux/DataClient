@@ -2,6 +2,11 @@ package org.oLabDynamics.client;
 
 import org.oLabDynamics.rest.ResourceSupport;
 
+/**
+ * 
+ * @author Benoit Charroux
+ *
+ */
 public class Library extends ResourceSupport{
 	
 	String libraryName;

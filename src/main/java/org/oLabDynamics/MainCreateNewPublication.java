@@ -39,6 +39,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.security.crypto.codec.Base64;
 
+/**
+ * 
+ * @author Benoit Charroux
+ *
+ */
 public class MainCreateNewPublication {
 
 	/**
