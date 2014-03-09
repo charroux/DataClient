@@ -7,6 +7,10 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -20,8 +24,9 @@ import org.oLabDynamics.client.ExecShareConnexionFactory;
 import org.oLabDynamics.client.Query;
 import org.oLabDynamics.client.ExecShare.Format;
 import org.oLabDynamics.client.exec.ExecutorException;
-import org.oLabDynamics.client.exec.ResultListener;
+import org.oLabDynamics.client.exec.RunningTaskListener;
 import org.oLabDynamics.client.exec.RunningTask;
+import org.oLabDynamics.client.exec.RunningTaskImpl;
 import org.oLabDynamics.rest.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -52,13 +57,13 @@ import org.springframework.stereotype.Component;
 public class ExecShareImpl<T> implements ExecShare<T>{
 	
 	class CodeWithInputData{
-		Code code;
+		CompanionSite companionSite;
 		InputData[] inputs;
-		public Code getCode() {
-			return code;
+		public CompanionSite getCompanionSite() {
+			return companionSite;
 		}
-		public void setCode(Code code) {
-			this.code = code;
+		public void setCompanionSite(CompanionSite companionSite) {
+			this.companionSite = companionSite;
 		}
 		public InputData[] getInputs() {
 			return inputs;
@@ -69,6 +74,8 @@ public class ExecShareImpl<T> implements ExecShare<T>{
 		
 	}
 	
+	ExecutorService executorService = Executors.newCachedThreadPool();
+
 	static ExecShareImpl execShare;
 	static Resource entryPoints = new Resource();
 	
@@ -108,6 +115,10 @@ public class ExecShareImpl<T> implements ExecShare<T>{
 		return execShare;
 	}
 	
+	public ExecutorService getExecutorService() {
+		return executorService;
+	}
+
 	ExecShareConnexionFactory execShareConnexionFactory;
 	RestTemplate restTemplate;
 	
@@ -213,9 +224,9 @@ public class ExecShareImpl<T> implements ExecShare<T>{
 		} 
 		
 	}
-
+	
 	@Override
-	public RunningTask exec(Code code) throws ExecutorException {
+	public RunningTask exec(CompanionSite companionSite) throws ExecutorException {
 		
 		HttpHeaders headers = new HttpHeaders();
     	headers.setContentType(MediaType.APPLICATION_JSON);
@@ -228,38 +239,47 @@ public class ExecShareImpl<T> implements ExecShare<T>{
         headers.add("Authorization", "Basic " + new String(encodedAuthorisation));
         
         CodeWithInputData codeWithInputData = new CodeWithInputData();
-        codeWithInputData.setCode(code);
+        codeWithInputData.setCompanionSite(companionSite);
+        Code code = companionSite.getCode();
         InputData[] inputs = code.getInputs().toArray(new InputData[0]);
         codeWithInputData.setInputs(inputs);
         
 		HttpEntity<CodeWithInputData> entities = new HttpEntity<CodeWithInputData>(codeWithInputData, headers);
 		
-		String href = this.discoverLink("exec").getHref();
+		String href = this.discoverLink("executor").getHref();
 		
-		ResponseEntity<RunningTask> response = restTemplate.exchange(href, HttpMethod.PUT, entities, RunningTask.class);
+		ResponseEntity<RunningTaskImpl> response = restTemplate.exchange(href, HttpMethod.PUT, entities, RunningTaskImpl.class);
 		
-		RunningTask runningTask = response.getBody();
+		RunningTaskImpl runningTask = response.getBody();
+		
+		runningTask.setExecShare(execShare);
+		
+		//runningTask.setExecutor(executor);
+		
+		//runningTask.setRestTemplate(restTemplate);
+		
+		runningTask.getRunningState();
 		
 		return runningTask;
 	}
 
 	@Override
-	public void exec(Code code, ResultListener resultListener)
+	public void exec(CompanionSite companionSite, RunningTaskListener resultListener)
 			throws ExecutorException {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public RunningTask exec(Code code, List<InputData> inputs)
+	public RunningTask exec(CompanionSite companionSite, List<InputData> inputs)
 			throws ExecutorException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void exec(Code code, List<InputData> inputs,
-			ResultListener resultListener) throws ExecutorException {
+	public void exec(CompanionSite companionSite, List<InputData> inputs,
+			RunningTaskListener resultListener) throws ExecutorException {
 		// TODO Auto-generated method stub
 		
 	}
@@ -319,6 +339,12 @@ public class ExecShareImpl<T> implements ExecShare<T>{
 	@Override
 	public List<OutputData> importOutputData(InputStream outputStream,
 			org.oLabDynamics.client.ExecShare.Format format) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public RunningTask exec(ThematicSite thematicSite) throws ExecutorException {
 		// TODO Auto-generated method stub
 		return null;
 	}

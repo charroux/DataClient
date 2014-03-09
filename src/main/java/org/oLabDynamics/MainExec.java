@@ -56,10 +56,19 @@ public class MainExec {
 			CompanionSite companionSite = publication.getCompanionSite();
 			
 			Code code = companionSite.getCode();
+			if(code != null){
 			
-			List<InputData> inputs = code.getInputs();
-			if(inputs != null){
-				RunningTask runningTask = execShare.exec(code);
+				List<InputData> inputs = code.getInputs();
+				if(inputs != null){
+					RunningTask runningTask = execShare.exec(companionSite);
+					//List<OutputData> outputs = runningTask.getResult();
+					//System.out.println(outputs);
+					
+					Thread.sleep(6000);
+					boolean cancelled = runningTask.cancel(true);
+					System.out.println("cancelled = " + cancelled);
+				}
+
 			}
 			
 						

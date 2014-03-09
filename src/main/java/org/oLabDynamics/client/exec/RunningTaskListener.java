@@ -9,8 +9,8 @@ import org.oLabDynamics.client.data.OutputData;
  * @author Benoit Charroux
  *
  */
-public interface ResultListener {
+public interface RunningTaskListener {
 	
-	public void onResult(List<OutputData> ouputs);
+	public void onNewState(RunningTask.State state, RunningTask runningTask);
 
 }

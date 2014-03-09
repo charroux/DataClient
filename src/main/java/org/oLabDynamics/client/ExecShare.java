@@ -8,10 +8,12 @@ import java.io.OutputStream;
 import java.util.List;
 
 import org.oLabDynamics.client.data.Code;
+import org.oLabDynamics.client.data.CompanionSite;
 import org.oLabDynamics.client.data.InputData;
 import org.oLabDynamics.client.data.OutputData;
+import org.oLabDynamics.client.data.ThematicSite;
 import org.oLabDynamics.client.exec.ExecutorException;
-import org.oLabDynamics.client.exec.ResultListener;
+import org.oLabDynamics.client.exec.RunningTaskListener;
 import org.oLabDynamics.client.exec.RunningTask;
 import org.oLabDynamics.rest.Resource;
 
@@ -27,17 +29,32 @@ public interface ExecShare<T> {
 		JSON
 	}
 	
+	/**
+	 * Request
+	 * @param query
+	 * @return
+	 * @throws Exception
+	 */
 	public List<T> prepare(Query query) throws Exception;
 	
 	public void publish(Resource resourceSupport);
 	
-	public RunningTask exec(Code code) throws ExecutorException;
+	/**
+	 * Launch the code related to a companion site.
+	 * The companion site must be registered to the server.
+	 * @param companionSite
+	 * @return
+	 * @throws ExecutorException
+	 */
+	public RunningTask exec(CompanionSite companionSite) throws ExecutorException;
 	
-	public void exec(Code code, ResultListener resultListener) throws ExecutorException;
+	public void exec(CompanionSite companionSite, RunningTaskListener resultListener) throws ExecutorException;
 	
-	public RunningTask exec(Code code, List<InputData> inputs) throws ExecutorException;
+	public RunningTask exec(CompanionSite companionSite, List<InputData> inputs) throws ExecutorException;
 	
-	public void exec(Code code, List<InputData> inputs, ResultListener resultListener) throws ExecutorException;
+	public void exec(CompanionSite companionSite, List<InputData> inputs, RunningTaskListener resultListener) throws ExecutorException;
+	
+	public RunningTask exec(ThematicSite thematicSite) throws ExecutorException;
 	
 	public void exportInputData(List<InputData> inputs, FileOutputStream file, Format format);
 	
