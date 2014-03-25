@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Link;
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.oLabDynamics.client.ExecShare.PUBLICATION_MODE;
 import org.oLabDynamics.client.ExecShareConnexionFactory;
 import org.oLabDynamics.rest.Resource;
 import org.springframework.http.HttpEntity;
@@ -142,7 +143,7 @@ public class CompanionSite extends Resource{
 		this.code = code;
 	}
 	
-	void publish(){
+	void publish(PUBLICATION_MODE publicationMode){
 		
 		HttpHeaders headers = new HttpHeaders();
     	headers.setContentType(MediaType.APPLICATION_JSON);

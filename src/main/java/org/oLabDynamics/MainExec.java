@@ -1,6 +1,7 @@
 package org.oLabDynamics;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -17,7 +18,10 @@ import org.oLabDynamics.client.data.OutputData;
 import org.oLabDynamics.client.data.Program;
 import org.oLabDynamics.client.data.Publication;
 import org.oLabDynamics.client.data.ThematicSite;
+import org.oLabDynamics.client.exec.Indicator;
 import org.oLabDynamics.client.exec.RunningTask;
+import org.oLabDynamics.client.exec.RunningTask.State;
+import org.oLabDynamics.client.exec.RunningTaskListener;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.hateoas.Link;
@@ -36,9 +40,21 @@ import org.springframework.security.crypto.codec.Base64;
  */
 public class MainExec {
 
-	/**
-	 * @param args
-	 */
+	static final class TaskListener implements RunningTaskListener{
+
+		@Override
+		public void onProgress(State state, RunningTask runningTask) {
+			Iterator<Indicator> indicators = runningTask.getIndicators().iterator();
+			Indicator indicator;
+			System.out.println("TaskListener : state = " + state);
+			while(indicators.hasNext()){
+				indicator = indicators.next();
+				System.out.println("TaskListener : " + indicator);
+			}
+		}
+		
+	}
+	
 	public static void main(String[] args) {
 		
 		try{
@@ -46,7 +62,7 @@ public class MainExec {
 			ExecShare execShare = ExecShareImpl.getInstance();
 					
 			Query query = new Query("author");
-			query.addFilter("firstName", Query.FilterOperator.EQUAL, "Tintin");
+			//query.addFilter("firstName", Query.FilterOperator.EQUAL, "Tintin");
 			List<Author> authors = execShare.prepare(query);
 			Author author = authors.get(0);
 			
@@ -61,12 +77,31 @@ public class MainExec {
 				List<InputData> inputs = code.getInputs();
 				if(inputs != null){
 					RunningTask runningTask = execShare.exec(companionSite);
+					
+					runningTask.addRunningTaskListener(new TaskListener());
+					
+					String[] indicatorNames = runningTask.getIndicatorNames();
+					Indicator indicator;
+					for(int i=0; i<indicatorNames.length; i++){
+						indicator = runningTask.findIndicatorByName(indicatorNames[i]);
+						System.out.println(indicator);
+					}
 					//List<OutputData> outputs = runningTask.getResult();
 					//System.out.println(outputs);
 					
-					Thread.sleep(6000);
+					Thread.sleep(15000);
+					
+					System.out.println("cancel command is sent");
+					
 					boolean cancelled = runningTask.cancel(true);
-					System.out.println("cancelled = " + cancelled);
+					
+					System.out.println("cancel has been done. Final state is : " + runningTask.getState());
+					
+					
+					for(int i=0; i<indicatorNames.length; i++){
+						indicator = runningTask.findIndicatorByName(indicatorNames[i]);
+						System.out.println(indicator);
+					}
 				}
 
 			}

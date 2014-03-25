@@ -23,6 +23,7 @@ import org.oLabDynamics.client.ExecShare;
 import org.oLabDynamics.client.ExecShareConnexionFactory;
 import org.oLabDynamics.client.Query;
 import org.oLabDynamics.client.ExecShare.Format;
+import org.oLabDynamics.client.ExecShare.PUBLICATION_MODE;
 import org.oLabDynamics.client.exec.ExecutorException;
 import org.oLabDynamics.client.exec.RunningTaskListener;
 import org.oLabDynamics.client.exec.RunningTask;
@@ -142,7 +143,7 @@ public class ExecShareImpl<T> implements ExecShare<T>{
 
 	public List<T> prepare(Query query) throws Exception {
 		
-		String rel = query.getRel();
+		String rel = query.getDataType();
 		
 		Link link = discoverLink(rel);
     	if(link == null){	
@@ -152,7 +153,9 @@ public class ExecShareImpl<T> implements ExecShare<T>{
     	
     	String queryString = query.format();
     	
-    	href = href + "?query=" + queryString;
+    	if(queryString.equals("") == false){
+    		href = href + "?query=" + queryString;
+    	}
     	
     	HttpHeaders headers = new HttpHeaders();
     	headers.setContentType(MediaType.APPLICATION_JSON);
@@ -168,6 +171,10 @@ public class ExecShareImpl<T> implements ExecShare<T>{
     	if(rel.equals("author")){
     		ParameterizedTypeReference<List<Author>> typeRef = new ParameterizedTypeReference<List<Author>>() {};
         	ResponseEntity<List<Author>> resp = restTemplate.exchange(href, HttpMethod.GET, entity, typeRef);
+        	HttpStatus httpStatus = resp.getStatusCode();
+        	if(httpStatus.equals(HttpStatus.OK) == false){
+        		System.out.println("errrrrreeeeeerrrrrr");
+        	}
     		List respBody = resp.getBody();
     		return respBody;
     	} else if(rel.equals("publication")){
@@ -191,35 +198,35 @@ public class ExecShareImpl<T> implements ExecShare<T>{
 	}
 
 	@Override
-	public void publish(Resource resourceSupport) {
+	public void publish(Resource resourceSupport, PUBLICATION_MODE publicationMode) {
 
 		if(resourceSupport instanceof Author){
 			
-			((Author)resourceSupport).publish();
+			((Author)resourceSupport).publish(publicationMode);
 			
 		} else if(resourceSupport instanceof Publication){
 			
-			((Publication)resourceSupport).publish();
+			((Publication)resourceSupport).publish(publicationMode);
 			
 		} else if(resourceSupport instanceof CompanionSite){
 			
-			((CompanionSite)resourceSupport).publish();
+			((CompanionSite)resourceSupport).publish(publicationMode);
 			
 		} else if(resourceSupport instanceof Code){
 			
-			((Code)resourceSupport).publish();
+			((Code)resourceSupport).publish(publicationMode);
 			
 		} else if(resourceSupport instanceof InputData){
 			
-			((InputData)resourceSupport).publish();
+			((InputData)resourceSupport).publish(publicationMode);
 			
 		} else if(resourceSupport instanceof OutputData){
 			
-			((OutputData)resourceSupport).publish();
+			((OutputData)resourceSupport).publish(publicationMode);
 			
 		} else if(resourceSupport instanceof ThematicSite){
 			
-			((ThematicSite)resourceSupport).publish();
+			((ThematicSite)resourceSupport).publish(publicationMode);
 			
 		} 
 		

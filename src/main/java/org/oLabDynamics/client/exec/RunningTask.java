@@ -9,7 +9,8 @@ import java.util.Set;
 import org.oLabDynamics.client.data.OutputData;
 
 /**
- * 
+ * Main interface to control code computation (cancellation...) and to get information (results, indicators like ramaining time to complete...).
+ *  
  * @author Benoit Charroux
  *
  */
@@ -29,6 +30,12 @@ public interface RunningTask {
 		KILLED_BY_ADMINISTRATOR
 	}
 	
+	/**
+	 * Frequency used to refresh information from the computational server.
+	 * 
+	 * @author charroux
+	 *
+	 */
 	public static enum UPDATE_STATE_FREQUENCY{
 		HIGH(2),
 		NORMAL(5),
@@ -45,9 +52,19 @@ public interface RunningTask {
 		}
 	}
 	
+	/**
+	 * An interface to get informations about the computation in an asynchronous mode
+	 * @param listener
+	 */
 	public void addRunningTaskListener(RunningTaskListener listener);
 	
 	/**
+	 * @param listener
+	 */
+	public void removeRunningTaskListener(RunningTaskListener listener);
+	
+	/**
+	 * Wait until computation has been cancelled.
 	 * 
 	 * @param mayInterruptIfRunning
 	 * @return
@@ -73,7 +90,7 @@ public interface RunningTask {
 	public List<OutputData> getResult(UPDATE_STATE_FREQUENCY frequency) throws InterruptedException, ExecutionException;
 	
 	/**
-	 * No blocking method
+	 * No blocking method to get results
 	 * @return
 	 * @throws InterruptedException
 	 * @throws ExecutionException
@@ -106,10 +123,24 @@ public interface RunningTask {
 	
 	public String getFailureInfo();
 	
-	public String[] getCounterNames();
+	/**
+	 * 
+	 * @return the name of the indicators, or null if there is indicator.
+	 */
+	public String[] getIndicatorNames();
 	
-	public Collection<Counter> getCounters();
+	/**
+	 * Get indicators like computation start time, remaining time to complete...
+	 * @return
+	 */
 	
-	public Counter findByName(String counterName);
+	public Collection<Indicator> getIndicators();
+	
+	/**
+	 * Find an indicator by its name.
+	 * @param indicatorName
+	 * @return
+	 */
+	public Indicator findIndicatorByName(String indicatorName);
 	  
 }

@@ -20,8 +20,22 @@ package org.oLabDynamics.client.exec;
 
 import java.io.Serializable;
 
-public class Counter implements Serializable{
+/**
+ * 
+ * Can implements any indicator about computation like start time, remaining time to complete...
+ * Indicator has been designed to be easily extended to new indicators or indicators dedicated to a specific computational infrastructure.
+ * 
+ * @author Benoît Charroux
+ *
+ */
+public class Indicator implements Serializable{
 	
+	/**
+	 * Convenience constant to know which type of indicators it is. With this type, a graphical user interface can display an appropriate control (sliders, laps...).
+	 * 
+	 * @author Benoît Charroux
+	 *
+	 */
 	public enum CounterType{
 		DATE,
 		INSTANT_VALUE,
@@ -34,11 +48,11 @@ public class Counter implements Serializable{
 	private long value = 0;
 	private CounterType counterType;
     
-	protected Counter() {
+	protected Indicator() {
 		
 	}
 
-	protected Counter(String name, String displayName) {
+	protected Indicator(String name, String displayName) {
 		this.name = name;
 		this.displayName = displayName;
 	}
@@ -57,6 +71,24 @@ public class Counter implements Serializable{
 
 	public CounterType getCounterType() {
 		return counterType;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
+	public void setValue(long value) {
+		this.value = value;
+	}
+
+	@Override
+	public String toString() {
+		return "Indicator [name=" + name + ", displayName=" + displayName
+				+ ", value=" + value + ", counterType=" + counterType + "]";
 	}
 	
 	

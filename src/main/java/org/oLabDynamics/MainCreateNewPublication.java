@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.oLabDynamics.client.ExecShare;
+import org.oLabDynamics.client.ExecShare.PUBLICATION_MODE;
 import org.oLabDynamics.client.Query;
 import org.oLabDynamics.client.Query.FilterOperator;
 import org.oLabDynamics.client.data.Author;
@@ -76,13 +77,13 @@ public class MainCreateNewPublication {
 			
 			ExecShare execShare = ExecShareImpl.getInstance();
 			
-			execShare.publish(author);
-			execShare.publish(publication);
-			execShare.publish(companionSite);
-			execShare.publish(code);
-			execShare.publish(input);
-			execShare.publish(output);
-			execShare.publish(thematicSite);
+			execShare.publish(author, PUBLICATION_MODE.IN_PRIVATE_FOR_EVALUATION);
+			execShare.publish(publication, PUBLICATION_MODE.IN_PRIVATE_FOR_EVALUATION);
+			execShare.publish(companionSite, PUBLICATION_MODE.IN_PRIVATE_FOR_EVALUATION);
+			execShare.publish(code, PUBLICATION_MODE.IN_PRIVATE_FOR_EVALUATION);
+			execShare.publish(input, PUBLICATION_MODE.IN_PRIVATE_FOR_EVALUATION);
+			execShare.publish(output, PUBLICATION_MODE.IN_PRIVATE_FOR_EVALUATION);
+			execShare.publish(thematicSite, PUBLICATION_MODE.IN_PRIVATE_FOR_EVALUATION);
 			
 			
 			Query query = new Query("author");
@@ -176,8 +177,8 @@ public class MainCreateNewPublication {
 			
 			execShare = ExecShareImpl.getInstance();
 			
-			execShare.publish(publication);
-			execShare.publish(author);
+			execShare.publish(publication, PUBLICATION_MODE.IN_PRIVATE_FOR_EVALUATION);
+			execShare.publish(author, PUBLICATION_MODE.IN_PRIVATE_FOR_EVALUATION);
 			
 			
 			query = new Query("author");

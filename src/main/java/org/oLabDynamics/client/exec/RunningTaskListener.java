@@ -6,11 +6,13 @@ import org.oLabDynamics.client.data.OutputData;
 
 /**
  * 
+ * Get computational information in an asynchronous mode.
+ * 
  * @author Benoit Charroux
  *
  */
 public interface RunningTaskListener {
 	
-	public void onNewState(RunningTask.State state, RunningTask runningTask);
+	public void onProgress(RunningTask.State state, RunningTask runningTask);
 
 }

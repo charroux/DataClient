@@ -17,9 +17,12 @@ http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 	<ref bean="atomConverter"  /> -->
 	<ref bean="jsonConverter" />
 	</list>
-</property>
+	</property>
+	<property name="errorHandler"  ref="errorHandler"/>
  </bean>  
  
+ <bean id="errorHandler" class="org.oLabDynamics.client.ResponseErrorHandler"/>
+
  <bean id="jsonConverter" 
             class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
    <property name="supportedMediaTypes" value="application/json" />

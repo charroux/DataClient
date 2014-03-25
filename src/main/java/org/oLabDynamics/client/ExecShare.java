@@ -19,31 +19,63 @@ import org.oLabDynamics.rest.Resource;
 
 /**
  * 
+ * Main interface to {@link org.oLabDynamics.client.ExecShare#prepare(Query) retrieve} any data from Exec & Share data model,
+ * export or import this model, {@link org.oLabDynamics.client.ExecShare#publish(Resource, PUBLICATION_MODE) publish} data to the Exec & Share portal
+ * and {@link org.oLabDynamics.client.ExecShare#exec(CompanionSite) launch} code associated to a companion site or a thematic site.
+ * 
  * @author Benoit Charroux
  *
  * @param <T>
  */
 public interface ExecShare<T> {
 		
-	enum Format{
+	/**
+	 * Export format for Exec & Share data 
+	 * @author charroux
+	 *
+	 */
+	public enum Format{
 		JSON
 	}
 	
 	/**
-	 * Request
+	 * Publication for evaluation (private access) or for public publication to the Exec & Share portal 
+	 * @author charroux
+	 *
+	 */
+	public enum PUBLICATION_MODE{
+		IN_PRIVATE_FOR_EVALUATION,
+		PUBLIC;
+	}
+	
+	/**
+	 * Query the Exec & Share data model: retrieve an author from his (her) name, publication by title...
 	 * @param query
 	 * @return
 	 * @throws Exception
 	 */
 	public List<T> prepare(Query query) throws Exception;
 	
-	public void publish(Resource resourceSupport);
+	/**
+	 * Publish in private for evaluation or public access (to the Exec & Share web portal) any data: author, companion site...
+	 * 
+	 * Publish data "propre" to a resource (author...), plus related relationships: one to one (the publication's compation site), 
+	 * one to many (the author's publications)...
+	 * 
+	 * Attention ! When an author is published, only author's publication are published (one to many) but inverse relationship many to one 
+	 * will not (it will be published along with the publication). 
+	 * So, many publish method calls must be made to ensure both side publication (all relationships are bi-directonal associations).
+	 *  
+	 * @param resourceSupport
+	 * @param publicationMode
+	 */
+	public void publish(Resource resourceSupport, PUBLICATION_MODE publicationMode);
 	
 	/**
-	 * Launch the code related to a companion site.
-	 * The companion site must be registered to the server.
+	 * Launch the code related to a companion site: the companion site must be prior registered to the server by using {@link org.oLabDynamics.client.ExecShare#publish(Resource, PUBLICATION_MODE) publish}.
+	 * 
 	 * @param companionSite
-	 * @return
+	 * @return An access to the running task for getting results, cancellation...
 	 * @throws ExecutorException
 	 */
 	public RunningTask exec(CompanionSite companionSite) throws ExecutorException;

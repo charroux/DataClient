@@ -2,6 +2,8 @@ package org.oLabDynamics.client;
 
 /**
  * 
+ * Connexion information to access the REST Web Service (entry point URI) and user authentication. 
+ * 
  * @author Benoit Charroux
  *
  */

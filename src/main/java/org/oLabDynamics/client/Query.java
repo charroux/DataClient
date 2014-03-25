@@ -4,6 +4,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 /**
+ * Class to query the Exec & Share data model.
  * 
  * @author Benoit Charroux
  *
@@ -24,16 +25,29 @@ public class Query {
 		CONTAIN
 	}
 
-	private String rel;
+	private String dataType;
 
-	public Query(String rel) {
-		this.rel = rel;
+	/**
+	 * Create a query to retrieve a data form the {@link org.oLabDynamics.client.data Exec & Share data model} (an author, a companion site, a publication...).
+	 * 
+	 * @param dataType what to find. Must be one of the Exec & Share data model type like author, publication (see {@link org.oLabDynamics.client.data Exec & Share data model})
+	 */
+	public Query(String dataType) {
+		this.dataType = dataType;
 	}
 
-	public String getRel() {
-		return rel;
+	public String getDataType() {
+		return dataType;
 	}
 
+	/**
+	 * 
+	 * Add filters to a query to limit the number of responses.
+	 * 
+	 * @param attribut
+	 * @param filterOperator
+	 * @param value
+	 */
 	public void addFilter(String attribut, FilterOperator filterOperator, String value) {
 		Filter filter = new Filter();
 		filter.filterOperator = filterOperator;

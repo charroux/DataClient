@@ -3,6 +3,7 @@ package org.oLabDynamics.client.exec;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
@@ -46,9 +47,40 @@ public class RunningTaskImpl extends org.oLabDynamics.rest.Resource implements R
 	long taskId;
 	State state;
 	String failureInfo;
-	Collection<Counter> counters;
+	Collection<Indicator> indicators;
 	List<OutputData> outputs;
-	UPDATE_STATE_FREQUENCY updateResultFrequency; 
+	UPDATE_STATE_FREQUENCY updateResultFrequency = UPDATE_STATE_FREQUENCY.NORMAL; 
+	
+	List<RunningTaskListener> taskListeners;
+	
+	public RunningTaskImpl(){
+		super();
+		taskListeners = new ArrayList<RunningTaskListener>();
+		indicators = new ArrayList<Indicator>();
+	}
+	/**
+	 * 
+	 * @author Benoit Charroux
+	 *
+	 */
+	class TaskListenerThread implements Runnable{
+
+		RunningTaskImpl runningTask;
+		
+		public TaskListenerThread(RunningTaskImpl runningTask) {
+			super();
+			this.runningTask = runningTask;
+		}
+
+		@Override
+		public void run() {
+			for(int i=0; i<taskListeners.size(); i++){
+				taskListeners.get(i).onProgress(state, runningTask);
+			}
+			
+		}
+		
+	}
 	
 	public List<OutputData> getOutputs() {
 		return outputs;
@@ -64,8 +96,14 @@ public class RunningTaskImpl extends org.oLabDynamics.rest.Resource implements R
 	
 	@Override
 	public void addRunningTaskListener(RunningTaskListener listener) {
-		// TODO Auto-generated method stub
-		
+		if(taskListeners.contains(listener) == false){
+			taskListeners.add(listener);
+		}
+	}
+	
+	@Override
+	public void removeRunningTaskListener(RunningTaskListener listener){
+		taskListeners.remove(listener);
 	}
 	
 	@Override
@@ -115,6 +153,9 @@ public class RunningTaskImpl extends org.oLabDynamics.rest.Resource implements R
 
 	@Override
 	public boolean cancel(boolean mayInterruptIfRunning) {
+		
+		// first stop the thread that ask the server current running state...
+	   	
 		if(mayInterruptIfRunning==false && state==State.RUNNING){
 			return false;
 		}
@@ -123,12 +164,50 @@ public class RunningTaskImpl extends org.oLabDynamics.rest.Resource implements R
 			dialogWithServerThread.interrupt();
 		}
 		try {
-			System.out.println("latch wait");
 			cancelLatch.await(2, java.util.concurrent.TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
 		}
-		System.out.println("latch fin wait");
 		cancelLatch = null;
+		
+		// ...then send the rest server a cancel command
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		ExecShareConnexionFactory connexionFactory = execShare.getExecShareConnexionFactory();
+		String auth = connexionFactory.getUserName() + ":" + connexionFactory.getPassword();
+   	
+		byte[] encodedAuthorisation = Base64.encode(auth.getBytes());
+		headers.add("Authorization", "Basic " + new String(encodedAuthorisation));
+   	
+		HttpEntity<String> entity = new HttpEntity<String>(headers);
+   	 	RestTemplate restTemplate = execShare.getRestTemplate();
+   	 	
+		ResponseEntity<RunningTaskImpl> response = restTemplate.exchange(href, HttpMethod.DELETE, entity, RunningTaskImpl.class);
+	   	HttpStatus statusCode = response.getStatusCode();
+	   	if(statusCode != HttpStatus.OK){	
+	   		throw new ServerException("Unable to connect the server ! Check execAndShare.properties");
+	   	}
+	   	 	
+	   	RunningTask newRunningTask = response.getBody();
+	   	
+	   	this.setState(newRunningTask.getState());
+	   		
+	   	Collection<Indicator> newIndicators = newRunningTask.getIndicators();
+	   	if(newIndicators != null){
+	   		Iterator<Indicator> newIndicatorsIterator = newIndicators.iterator();
+	   		Indicator indicator;
+	   		Indicator newIndicator;
+	   		while(newIndicatorsIterator.hasNext()){
+	   			newIndicator = newIndicatorsIterator.next();
+	   			indicator = this.findIndicatorByName(newIndicator.getName());
+	   			if(indicator != null){
+	   				indicator.setValue(newIndicator.getValue());
+	   			}
+	   		}
+	   	}
+	   	 	  	 
+	   	this.setFailureInfo(newRunningTask.getFailureInfo());
+	   	
 		return state == State.CANCELLED_BY_USER;
 	}
 
@@ -162,19 +241,35 @@ public class RunningTaskImpl extends org.oLabDynamics.rest.Resource implements R
 	}
 
 	@Override
-	public String[] getCounterNames() {
-		return null;
+	public String[] getIndicatorNames() {
+		ArrayList<String> names = new ArrayList<String>();
+		Iterator<Indicator> indicatorsIterator = indicators.iterator();
+  	 	Indicator indicator;
+  	 	while(indicatorsIterator.hasNext()){
+  	 		indicator = indicatorsIterator.next();
+  	 		names.add(indicator.getName());
+  	 	}
+  	 	if(names.size() == 0){
+  	 		return null;
+  	 	}
+  	 	return names.toArray(new String[0]);
 	}
 	
 	@Override
-	public Collection<Counter> getCounters() {
-		// TODO Auto-generated method stub
-		return null;
+	public Collection<Indicator> getIndicators() {
+		return indicators;
 	}
 
 	@Override
-	public Counter findByName(String counterName) {
-		// TODO Auto-generated method stub
+	public Indicator findIndicatorByName(String indicatorName) {
+		Iterator<Indicator> indicatorsIterator = indicators.iterator();
+  	 	Indicator indicator;
+  	 	while(indicatorsIterator.hasNext()){
+  	 		indicator = indicatorsIterator.next();
+  	 		if(indicator.getName().equals(indicatorName)){
+  	 			return indicator;
+  	 		}
+  	 	}
 		return null;
 	}
 
@@ -208,16 +303,14 @@ public class RunningTaskImpl extends org.oLabDynamics.rest.Resource implements R
 		this.failureInfo = failureInfo;
 	}
 
-	public void setCounters(Collection<Counter> counters) {
-		this.counters = counters;
+	public void setIndicators(Collection<Indicator> indicators) {
+		this.indicators = indicators;
 	}
 
 	@Override
 	public void run() {
 		
 		dialogWithServerThread = Thread.currentThread();
-		
-		System.out.println("debut run");
 			
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
@@ -244,8 +337,6 @@ public class RunningTaskImpl extends org.oLabDynamics.rest.Resource implements R
 				return;
 			}
    	 		
-   	 		System.out.println("get running state");
-
    	   	 	ResponseEntity<RunningTaskImpl> response = restTemplate.exchange(href, HttpMethod.GET, entity, RunningTaskImpl.class);
    	   	 	HttpStatus statusCode = response.getStatusCode();
    	   	 	if(statusCode != HttpStatus.OK){	
@@ -255,11 +346,26 @@ public class RunningTaskImpl extends org.oLabDynamics.rest.Resource implements R
    	   	 	newRunningTask = response.getBody();
    	   	 
    	   	 	this.setState(newRunningTask.getState());
-   	 
-   	   	 	this.setCounters(newRunningTask.getCounters());
-   	   	 
+   	   	 	
+   	   	 	Collection<Indicator> newIndicators = newRunningTask.getIndicators();
+   	   	 	if(newIndicators != null){
+   	   	 		Iterator<Indicator> newIndicatorsIterator = newIndicators.iterator();
+   	   	 		Indicator indicator;
+   	   	 		Indicator newIndicator;
+   	   	 		while(newIndicatorsIterator.hasNext()){
+   	   	 			newIndicator = newIndicatorsIterator.next();
+   	   	 			indicator = this.findIndicatorByName(newIndicator.getName());
+   	   	 			if(indicator != null){
+   	   	 				indicator.setValue(newIndicator.getValue());
+   	   	 			}
+   	   	 		}
+   	   	 	}
+   	   	 	  	 
    	   	 	this.setFailureInfo(newRunningTask.getFailureInfo());
 
+   	   	 	execShare.getExecutorService().submit(new TaskListenerThread(this));
+   	   	 
+   	   	 	
    	 	}while(state==State.PENDING || state==State.RUNNING);
 	
    	 	if(state == State.SUCCEEDED){
