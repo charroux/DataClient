@@ -1,4 +1,4 @@
-package org.oLabDynamics;
+package test.org.oLabDynamics;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -12,16 +12,13 @@ import org.oLabDynamics.client.Query.FilterOperator;
 import org.oLabDynamics.client.data.Author;
 import org.oLabDynamics.client.data.Code;
 import org.oLabDynamics.client.data.CompanionSite;
-import org.oLabDynamics.client.data.Configuration;
-import org.oLabDynamics.client.data.ExecShareImpl;
 import org.oLabDynamics.client.data.InputData;
-import org.oLabDynamics.client.data.Linux;
-import org.oLabDynamics.client.data.OperatingSystem;
 import org.oLabDynamics.client.data.OutputData;
 import org.oLabDynamics.client.data.Program;
 import org.oLabDynamics.client.data.Publication;
 import org.oLabDynamics.client.data.ThematicSite;
 import org.oLabDynamics.client.data.Publication.PublicationType;
+import org.oLabDynamics.client.impl.ExecShareImpl;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.hateoas.Link;

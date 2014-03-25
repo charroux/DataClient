@@ -1,4 +1,4 @@
-package org.oLabDynamics.client.data;
+package org.oLabDynamics.client.impl;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -24,10 +24,17 @@ import org.oLabDynamics.client.ExecShareConnexionFactory;
 import org.oLabDynamics.client.Query;
 import org.oLabDynamics.client.ExecShare.Format;
 import org.oLabDynamics.client.ExecShare.PUBLICATION_MODE;
+import org.oLabDynamics.client.data.Author;
+import org.oLabDynamics.client.data.Code;
+import org.oLabDynamics.client.data.CompanionSite;
+import org.oLabDynamics.client.data.InputData;
+import org.oLabDynamics.client.data.OutputData;
+import org.oLabDynamics.client.data.Publication;
+import org.oLabDynamics.client.data.ServerException;
+import org.oLabDynamics.client.data.ThematicSite;
 import org.oLabDynamics.client.exec.ExecutorException;
 import org.oLabDynamics.client.exec.RunningTaskListener;
 import org.oLabDynamics.client.exec.RunningTask;
-import org.oLabDynamics.client.exec.RunningTaskImpl;
 import org.oLabDynamics.rest.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

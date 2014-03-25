@@ -1,4 +1,4 @@
-package org.oLabDynamics;
+package test.org.oLabDynamics;
 
 import java.io.File;
 import java.util.Collection;
@@ -12,7 +12,6 @@ import org.oLabDynamics.client.Query.FilterOperator;
 import org.oLabDynamics.client.data.Author;
 import org.oLabDynamics.client.data.Code;
 import org.oLabDynamics.client.data.CompanionSite;
-import org.oLabDynamics.client.data.ExecShareImpl;
 import org.oLabDynamics.client.data.InputData;
 import org.oLabDynamics.client.data.OutputData;
 import org.oLabDynamics.client.data.Program;
@@ -22,6 +21,7 @@ import org.oLabDynamics.client.exec.Indicator;
 import org.oLabDynamics.client.exec.RunningTask;
 import org.oLabDynamics.client.exec.RunningTask.State;
 import org.oLabDynamics.client.exec.RunningTaskListener;
+import org.oLabDynamics.client.impl.ExecShareImpl;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.hateoas.Link;

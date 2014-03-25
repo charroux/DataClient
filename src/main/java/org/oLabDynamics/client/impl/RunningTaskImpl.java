@@ -1,4 +1,4 @@
-package org.oLabDynamics.client.exec;
+package org.oLabDynamics.client.impl;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -16,10 +16,15 @@ import java.util.concurrent.TimeoutException;
 
 import org.oLabDynamics.client.ExecShare;
 import org.oLabDynamics.client.ExecShareConnexionFactory;
-import org.oLabDynamics.client.data.ExecShareImpl;
 import org.oLabDynamics.client.data.OutputData;
 import org.oLabDynamics.client.data.Publication;
 import org.oLabDynamics.client.data.ServerException;
+import org.oLabDynamics.client.exec.Indicator;
+import org.oLabDynamics.client.exec.RunningTask;
+import org.oLabDynamics.client.exec.RunningTaskListener;
+import org.oLabDynamics.client.exec.TimeUnit;
+import org.oLabDynamics.client.exec.RunningTask.State;
+import org.oLabDynamics.client.exec.RunningTask.UPDATE_STATE_FREQUENCY;
 import org.oLabDynamics.rest.Resource;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpEntity;

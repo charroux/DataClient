@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import org.springframework.hateoas.Link;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.oLabDynamics.client.ExecShare.PUBLICATION_MODE;
+import org.oLabDynamics.client.impl.ExecShareImpl;
 import org.oLabDynamics.client.ExecShareConnexionFactory;
 import org.oLabDynamics.rest.Resource;
 import org.springframework.http.HttpEntity;
@@ -80,7 +81,7 @@ public class OutputData extends Resource {
 		this.description = description;
 	}
 	
-	void publish(PUBLICATION_MODE publicationMode){
+	public void publish(PUBLICATION_MODE publicationMode){
 		
 		HttpHeaders headers = new HttpHeaders();
     	headers.setContentType(MediaType.APPLICATION_JSON);

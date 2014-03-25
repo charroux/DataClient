@@ -47,7 +47,7 @@ public interface RunningTask {
 			this.seconds = seconds;
 		}
 		
-		int frequency(){
+		public int frequency(){
 			return seconds;
 		}
 	}

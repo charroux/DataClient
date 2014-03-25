@@ -1,4 +1,4 @@
-package org.oLabDynamics;
+package test.org.oLabDynamics;
 
 import java.util.List;
 

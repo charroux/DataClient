@@ -1,9 +1,9 @@
-package org.oLabDynamics;
+package test.org.oLabDynamics;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.oLabDynamics.client.ExecShare;
 import org.oLabDynamics.client.Query;
@@ -18,7 +18,7 @@ import org.oLabDynamics.client.data.OperatingSystem;
 import org.oLabDynamics.client.data.Program;
 import org.oLabDynamics.client.data.Publication;
 import org.oLabDynamics.client.data.ThematicSite;
-import org.oLabDynamics.client.data.Publication.PublicationType;
+import org.oLabDynamics.client.UnsupportedConfigurationException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.hateoas.Link;
@@ -35,7 +35,7 @@ import org.springframework.security.crypto.codec.Base64;
  * @author Benoit Charroux
  *
  */
-public class MainCreateThematicSite {
+public class MainDownloadCode {
 
 	/**
 	 * @param args
@@ -43,34 +43,33 @@ public class MainCreateThematicSite {
 	public static void main(String[] args) {
 		
 		try{
+
+			ExecShare execShare = new ExecShare();
 			
-			ThematicSiteReadWrite thematicSite = new ThematicSiteReadWrite();
-			
-			ExecShare execShare = ExecShare.getInstance();
-			
-			Query query = new Query("author");
-			query.addFilter("name", Query.FilterOperator.EQUAL, "Tintin");
-			List<Author> authors = execShare.prepare(query);
-			Author author = authors.get(0);
-			System.out.println(author);
-			
-			List<Publication> publis = author.getPublications();
+			Query query = new Query("publication");
+			query.addFilter("title", Query.FilterOperator.EQUAL, "bla bla");
+			List<Publication> publis = execShare.prepare(query);
 			Publication publication = publis.get(0);
 			System.out.println(publication);
 			
-			CompanionSite companionSite = publication.getCompanionSite();
+			Code referenceImplementation = publication.getReferenceImplementation();
+			System.out.println(referenceImplementation);
 			
-			thematicSite.addCompanionSite(companionSite);
+			File file = new File("code.c");
+			referenceImplementation.export(file);
 			
-			CompanionSiteReadWrite companionSiteReadWrite = new CompanionSiteReadWrite();
+			Set<Configuration> configurations = referenceImplementation.getConfigurations();
+			Iterator<Configuration> iterator = configurations.iterator();
+			while(iterator.hasNext()){
+				System.out.println(iterator.next());
+			}
 			
-			PublicationReadWrite publicationReadWrite = new PublicationReadWrite(PublicationType.WORKING_PAPER, "Titre d'un super publi");
-			publicationReadWrite.setCompanionSite(companionSiteReadWrite);
-			
-			thematicSite.addCompanionSite(companionSiteReadWrite);
-			
-			thematicSite.publishThematicSite();
-			
+			configurations = referenceImplementation.getConfigurations(Linux.class);
+			Configuration configuration = configurations.iterator().next();
+			configuration.installOnThisMachine();
+						
+		}catch(UnsupportedConfigurationException e){
+			e.printStackTrace();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
