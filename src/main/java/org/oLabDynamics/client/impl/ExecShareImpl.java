@@ -21,6 +21,7 @@ import org.springframework.hateoas.LinkDiscoverer;
 import org.springframework.hateoas.core.DefaultLinkDiscoverer;
 import org.oLabDynamics.client.ExecShare;
 import org.oLabDynamics.client.ExecShareConnexionFactory;
+import org.oLabDynamics.client.ExecShareException;
 import org.oLabDynamics.client.Query;
 import org.oLabDynamics.client.ExecShare.Format;
 import org.oLabDynamics.client.ExecShare.PUBLICATION_MODE;
@@ -205,37 +206,9 @@ public class ExecShareImpl<T> implements ExecShare<T>{
 	}
 
 	@Override
-	public void publish(Resource resourceSupport, PUBLICATION_MODE publicationMode) {
-
-		if(resourceSupport instanceof Author){
-			
-			((Author)resourceSupport).publish(publicationMode);
-			
-		} else if(resourceSupport instanceof Publication){
-			
-			((Publication)resourceSupport).publish(publicationMode);
-			
-		} else if(resourceSupport instanceof CompanionSite){
-			
-			((CompanionSite)resourceSupport).publish(publicationMode);
-			
-		} else if(resourceSupport instanceof Code){
-			
-			((Code)resourceSupport).publish(publicationMode);
-			
-		} else if(resourceSupport instanceof InputData){
-			
-			((InputData)resourceSupport).publish(publicationMode);
-			
-		} else if(resourceSupport instanceof OutputData){
-			
-			((OutputData)resourceSupport).publish(publicationMode);
-			
-		} else if(resourceSupport instanceof ThematicSite){
-			
-			((ThematicSite)resourceSupport).publish(publicationMode);
-			
-		} 
+	public void publish(CompanionSite companionSite, PUBLICATION_MODE publicationMode) throws ExecShareException {
+		
+		companionSite.publish(publicationMode);
 		
 	}
 	

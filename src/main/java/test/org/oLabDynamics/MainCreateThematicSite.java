@@ -12,7 +12,6 @@ import org.oLabDynamics.client.data.Author;
 import org.oLabDynamics.client.data.Code;
 import org.oLabDynamics.client.data.CompanionSite;
 import org.oLabDynamics.client.data.InputData;
-import org.oLabDynamics.client.data.Program;
 import org.oLabDynamics.client.data.Publication;
 import org.oLabDynamics.client.data.ThematicSite;
 import org.oLabDynamics.client.data.Publication.PublicationType;

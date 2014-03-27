@@ -13,6 +13,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.oLabDynamics.client.ExecShare.PUBLICATION_MODE;
 import org.oLabDynamics.client.impl.ExecShareImpl;
 import org.oLabDynamics.client.ExecShareConnexionFactory;
+import org.oLabDynamics.client.ExecShareException;
 import org.oLabDynamics.rest.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -181,7 +182,7 @@ public class Publication extends Resource {
 		this.publicationType = publicationType;
 	}
 
-	public void publishPublication() {
+/*	public void publish() {
 		class Local {};
 		Method currentMethod = Local.class.getEnclosingMethod();
 		String currentMethodName = currentMethod.getName();
@@ -189,8 +190,8 @@ public class Publication extends Resource {
 		ExecShareImpl execShare = (ExecShareImpl) ExecShareImpl.getInstance();
 		
 		String href = execShare.discoverLink(currentMethodName).getHref();
-		/*Link link = relToLink.get(currentMethodName);
-		String href = link.getHref();*/	
+		Link link = relToLink.get(currentMethodName);
+		String href = link.getHref();	
 		
 		HttpHeaders headers = new HttpHeaders();
     	headers.setContentType(MediaType.APPLICATION_JSON);
@@ -206,9 +207,15 @@ public class Publication extends Resource {
 		
 		ResponseEntity<Resource> response = restTemplate.exchange(href, HttpMethod.POST, entity, Resource.class);
 		
-	}
+	}*/
 	
-	public void publish(PUBLICATION_MODE publicationMode){
+	/**
+	 * Restricted access: can not be used without special authorization.
+	 * Use {@link org.oLabDynamics.client.ExecShare#publish(CompanionSite, PUBLICATION_MODE) publish} instead.
+	 * @param publicationMode
+	 * @throws ExecShareException
+	 */
+	public void publish(PUBLICATION_MODE publicationMode) throws ExecShareException{
 		
 		HttpHeaders headers = new HttpHeaders();
     	headers.setContentType(MediaType.APPLICATION_JSON);
@@ -219,6 +226,13 @@ public class Publication extends Resource {
 
     	byte[] encodedAuthorisation = Base64.encode(auth.getBytes());
         headers.add("Authorization", "Basic " + new String(encodedAuthorisation));
+        
+        this.publishWithCompanionSite(publicationMode, headers);
+	}
+	
+	void publishWithCompanionSite(PUBLICATION_MODE publicationMode, HttpHeaders headers){
+		
+		ExecShareImpl execShare = (ExecShareImpl) ExecShareImpl.getInstance();
         
         if(super.getLinks().size() == 0){	// this is a new publication 
         	

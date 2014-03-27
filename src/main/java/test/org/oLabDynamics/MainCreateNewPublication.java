@@ -14,7 +14,6 @@ import org.oLabDynamics.client.data.Code;
 import org.oLabDynamics.client.data.CompanionSite;
 import org.oLabDynamics.client.data.InputData;
 import org.oLabDynamics.client.data.OutputData;
-import org.oLabDynamics.client.data.Program;
 import org.oLabDynamics.client.data.Publication;
 import org.oLabDynamics.client.data.ThematicSite;
 import org.oLabDynamics.client.data.Publication.PublicationType;
@@ -74,14 +73,7 @@ public class MainCreateNewPublication {
 			
 			ExecShare execShare = ExecShareImpl.getInstance();
 			
-			execShare.publish(author, PUBLICATION_MODE.IN_PRIVATE_FOR_EVALUATION);
-			execShare.publish(publication, PUBLICATION_MODE.IN_PRIVATE_FOR_EVALUATION);
-			execShare.publish(companionSite, PUBLICATION_MODE.IN_PRIVATE_FOR_EVALUATION);
-			execShare.publish(code, PUBLICATION_MODE.IN_PRIVATE_FOR_EVALUATION);
-			execShare.publish(input, PUBLICATION_MODE.IN_PRIVATE_FOR_EVALUATION);
-			execShare.publish(output, PUBLICATION_MODE.IN_PRIVATE_FOR_EVALUATION);
-			execShare.publish(thematicSite, PUBLICATION_MODE.IN_PRIVATE_FOR_EVALUATION);
-			
+			execShare.publish(companionSite, PUBLICATION_MODE.IN_PRIVATE_FOR_EVALUATION);			
 			
 			Query query = new Query("author");
 			query.addFilter("firstName", Query.FilterOperator.EQUAL, "Castafiore");
@@ -173,10 +165,6 @@ public class MainCreateNewPublication {
 			publication.addAuthor(author, 1);
 			
 			execShare = ExecShareImpl.getInstance();
-			
-			execShare.publish(publication, PUBLICATION_MODE.IN_PRIVATE_FOR_EVALUATION);
-			execShare.publish(author, PUBLICATION_MODE.IN_PRIVATE_FOR_EVALUATION);
-			
 			
 			query = new Query("author");
 			query.addFilter("firstName", Query.FilterOperator.EQUAL, "Castafiore");

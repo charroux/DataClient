@@ -12,6 +12,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.oLabDynamics.client.ExecShare.PUBLICATION_MODE;
 import org.oLabDynamics.client.impl.ExecShareImpl;
 import org.oLabDynamics.client.ExecShareConnexionFactory;
+import org.oLabDynamics.client.ExecShareException;
 import org.oLabDynamics.rest.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -109,7 +110,13 @@ public class ThematicSite extends Resource {
 		
 	}
 	
-	public void publish(PUBLICATION_MODE publicationMode){
+	/**
+	 * Restricted access: can not be used without special authorization.
+	 * Use {@link org.oLabDynamics.client.ExecShare#publish(CompanionSite, PUBLICATION_MODE) publish} instead.
+	 * @param publicationMode
+	 * @throws ExecShareException
+	 */
+	public void publish(PUBLICATION_MODE publicationMode) throws ExecShareException{
 		
 		HttpHeaders headers = new HttpHeaders();
     	headers.setContentType(MediaType.APPLICATION_JSON);
@@ -120,6 +127,13 @@ public class ThematicSite extends Resource {
 
     	byte[] encodedAuthorisation = Base64.encode(auth.getBytes());
         headers.add("Authorization", "Basic " + new String(encodedAuthorisation));
+        
+        this.publish(publicationMode, headers);
+	}
+	
+	void publish(PUBLICATION_MODE publicationMode, HttpHeaders headers){
+		
+		ExecShareImpl execShare = (ExecShareImpl) ExecShareImpl.getInstance();
         
         if(super.getLinks().size() == 0){	// this is a new thematicSite 
         	

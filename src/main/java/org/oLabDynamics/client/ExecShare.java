@@ -57,19 +57,12 @@ public interface ExecShare<T> {
 	public List<T> prepare(Query query) throws Exception;
 	
 	/**
-	 * Publish in private for evaluation or public access (to the Exec & Share web portal) any data: author, companion site...
 	 * 
-	 * Publish data "propre" to a resource (author...), plus related relationships: one to one (the publication's compation site), 
-	 * one to many (the author's publications)...
-	 * 
-	 * Attention ! When an author is published, only author's publication are published (one to many) but inverse relationship many to one 
-	 * will not (it will be published along with the publication). 
-	 * So, many publish method calls must be made to ensure both side publication (all relationships are bi-directonal associations).
-	 *  
-	 * @param resourceSupport
+	 * @param companionSite
 	 * @param publicationMode
+	 * @throws ExecShareException
 	 */
-	public void publish(Resource resourceSupport, PUBLICATION_MODE publicationMode);
+	public void publish(CompanionSite companionSite, PUBLICATION_MODE publicationMode) throws ExecShareException;
 	
 	/**
 	 * Launch the code related to a companion site: the companion site must be prior registered to the server by using {@link org.oLabDynamics.client.ExecShare#publish(Resource, PUBLICATION_MODE) publish}.

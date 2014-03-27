@@ -14,6 +14,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.oLabDynamics.client.ExecShare.PUBLICATION_MODE;
 import org.oLabDynamics.client.impl.ExecShareImpl;
 import org.oLabDynamics.client.ExecShareConnexionFactory;
+import org.oLabDynamics.client.ExecShareException;
 import org.oLabDynamics.rest.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -144,7 +145,7 @@ public class CompanionSite extends Resource{
 		this.code = code;
 	}
 	
-	public void publish(PUBLICATION_MODE publicationMode){
+	public void publish(PUBLICATION_MODE publicationMode) throws ExecShareException{
 		
 		HttpHeaders headers = new HttpHeaders();
     	headers.setContentType(MediaType.APPLICATION_JSON);
@@ -259,6 +260,61 @@ public class CompanionSite extends Resource{
 			
 			ParameterizedTypeReference<CompanionSite[]> typeRef = new ParameterizedTypeReference<CompanionSite[]>() {};
 			restTemplate.exchange(href, HttpMethod.PUT, entities, typeRef);
+		}
+		
+		Publication publication = this.getPublication();
+		if(publication != null){
+			Code code = this.getCode();
+			if(code != null){
+				
+				List<InputData> inputs = code.getInputs();
+				if(inputs==null || inputs.size()==0){
+					throw new ExecShareException("Unable to publih a CompanionSite that has a Code without any Input.");
+				}
+				
+				List<OutputData> outputs = code.getOutputs();
+				if(outputs==null || outputs.size()==0){
+					throw new ExecShareException("Unable to publih a CompanionSite that has a Code without any Output.");
+				}
+				
+				List<Author> authors = publication.getAuthors();
+				if(authors==null || authors.size()==0){
+					throw new ExecShareException("Unable to publih a CompanionSite that has a publication without any Author.");
+				}
+				Author author;
+				for(int i=0; i<authors.size(); i++){
+					author = authors.get(i);
+					author.publish(publicationMode, headers);
+				}
+				
+				publication.publish(publicationMode);
+				
+				code.publish(publicationMode, headers);
+				
+				List<ThematicSite> thematicSites = this.getThematicSites();
+				ThematicSite thematicSite;
+				for(int i=0; i<thematicSites.size(); i++){
+					thematicSite = thematicSites.get(i);
+					thematicSite.publish(publicationMode, headers);
+				}
+				
+				InputData input;
+				for(int i=0; i<inputs.size(); i++){
+					input = inputs.get(i);
+					input.publish(publicationMode, headers);
+				}
+				
+				OutputData output;
+				for(int i=0; i<outputs.size(); i++){
+					output = outputs.get(i);
+					output.publish(publicationMode, headers);
+				}
+				
+			} else {
+				throw new ExecShareException("Unable to publih a CompanionSite that has no code.");
+			}
+		} else {
+			throw new ExecShareException("Unable to publih a CompanionSite that has no publication.");
 		}
 	}
 
