@@ -45,6 +45,7 @@ public class MainBenchmarking {
 					
 			Query query = new Query("author");
 			query.addFilter("firstName", Query.FilterOperator.EQUAL, "Tintin");
+			//query.addFilter("lastName", Query.FilterOperator.EQUAL, "Journaliste");
 			List<Author> authors = execShare.prepare(query);
 			Author author = authors.get(0);
 			System.out.println(author);

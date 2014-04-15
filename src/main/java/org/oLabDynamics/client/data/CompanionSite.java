@@ -1,6 +1,7 @@
 package org.oLabDynamics.client.data;
 
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ArrayList;
@@ -41,6 +42,8 @@ public class CompanionSite extends Resource{
 	
 	@JsonIgnore
 	Code code = null;
+	
+	URI uri;
 	
 	@JsonIgnore
 	RestTemplate restTemplate;
@@ -318,10 +321,21 @@ public class CompanionSite extends Resource{
 		}
 	}
 
+	
+	
 	@Override
 	public String toString() {
 		return "CompanionSite [thematicSites=" + thematicSites
-				+ ", publication=" + publication + ", code=" + code + "]";
+				+ ", publication=" + publication + ", code=" + code + ", uri="
+				+ uri + "]";
+	}
+
+	public URI getUri() {
+		return uri;
+	}
+
+	public void setUri(URI uri) {
+		this.uri = uri;
 	}
 
 	@Override
@@ -333,6 +347,7 @@ public class CompanionSite extends Resource{
 				+ ((publication == null) ? 0 : publication.hashCode());
 		result = prime * result
 				+ ((thematicSites == null) ? 0 : thematicSites.hashCode());
+		result = prime * result + ((uri == null) ? 0 : uri.hashCode());
 		return result;
 	}
 
@@ -360,9 +375,13 @@ public class CompanionSite extends Resource{
 				return false;
 		} else if (!thematicSites.equals(other.thematicSites))
 			return false;
+		if (uri == null) {
+			if (other.uri != null)
+				return false;
+		} else if (!uri.equals(other.uri))
+			return false;
 		return true;
 	}
-	
 	
 
 	

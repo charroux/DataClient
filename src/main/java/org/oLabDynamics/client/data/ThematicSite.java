@@ -1,6 +1,7 @@
 package org.oLabDynamics.client.data;
 
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -31,6 +32,8 @@ public class ThematicSite extends Resource {
 	
 	@JsonIgnore
 	List<CompanionSite> companionSites = null;
+	
+	URI uri;
 	
 	@JsonIgnore
 	RestTemplate restTemplate;
@@ -191,7 +194,8 @@ public class ThematicSite extends Resource {
 
 	@Override
 	public String toString() {
-		return "ThematicSite [companionSites=" + companionSites + "]";
+		return "ThematicSite [companionSites=" + companionSites + ", uri="
+				+ uri + "]";
 	}
 
 	@Override
@@ -200,6 +204,7 @@ public class ThematicSite extends Resource {
 		int result = super.hashCode();
 		result = prime * result
 				+ ((companionSites == null) ? 0 : companionSites.hashCode());
+		result = prime * result + ((uri == null) ? 0 : uri.hashCode());
 		return result;
 	}
 
@@ -217,8 +222,15 @@ public class ThematicSite extends Resource {
 				return false;
 		} else if (!companionSites.equals(other.companionSites))
 			return false;
+		if (uri == null) {
+			if (other.uri != null)
+				return false;
+		} else if (!uri.equals(other.uri))
+			return false;
 		return true;
 	}
+
+	
 	
 
 }
