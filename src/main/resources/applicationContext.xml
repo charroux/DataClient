@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:oxm="http://www.springframework.org/schema/oxm"
 xmlns:context="http://www.springframework.org/schema/context"
 xsi:schemaLocation="http://www.springframework.org/schema/beans
 http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
 http://www.springframework.org/schema/context
-http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+http://www.springframework.org/schema/context/spring-context-3.2.xsd
+http://www.springframework.org/schema/oxm
+http://www.springframework.org/schema/oxm/spring-oxm-3.2.xsd">
 
 <context:component-scan base-package="org.oLabDynamics.client" />
 
@@ -16,27 +19,54 @@ http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 	<!-- <ref bean="marshallingConverter" />
 	<ref bean="atomConverter"  /> -->
 	<ref bean="jsonConverter" />
+	<!-- <ref bean="byteArrayConverter" /> -->
 	</list>
 	</property>
 	<property name="errorHandler"  ref="errorHandler"/>
  </bean>  
  
- <bean id="errorHandler" class="org.oLabDynamics.client.ResponseErrorHandler"/>
+ <bean id="errorHandler" class="jra.ResponseErrorHandler"/>
+
+<!--  <bean id="byteArrayConverter" 
+            class="org.springframework.http.converter.ByteArrayHttpMessageConverter">
+   <property name="supportedMediaTypes" value="application/octet-stream" />
+</bean> -->
 
  <bean id="jsonConverter" 
             class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
    <property name="supportedMediaTypes" value="application/json" />
 </bean>
 
+<bean id="jaxb2Marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="classesToBeBound">
+            <list>
+            	<value>org.oLabDynamics.jra.model.CompanionSite</value>
+            	<value>org.oLabDynamics.jra.model.Publication</value>
+            	<value>org.oLabDynamics.jra.model.Author</value>
+                <value>org.oLabDynamics.jra.model.InputData</value>
+                <value>org.oLabDynamics.jra.model.OutputData</value>
+                <value>java.lang.Integer[][]</value>
+                <value>org.oLabDynamics.jra.model.Code</value>
+                <!-- <value>org.oLabDynamics.rest.Resource</value>    
+                <value>org.springframework.hateoas.ResourceSupport</value> -->
+            </list>
+        </property>
+        <!-- <property name="schema" value="classpath:org/springframework/oxm/schema.xsd"/> -->
+    </bean>
+
 <bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"> 
 		<property name="location" value="classpath:execAndShare.properties"/>
 </bean>
 
-<bean id="execShare" class="org.oLabDynamics.client.impl.ExecShareImpl">
+<bean id="execShare" class="org.oLabDynamics.jra.ExecShareImpl">
+	<property name="marshaller" ref="jaxb2Marshaller" />
+    <property name="unmarshaller" ref="jaxb2Marshaller" />
 </bean>
 
-<bean id="execShareConnexionFactory" class="org.oLabDynamics.client.ExecShareConnexionFactory">
-		<property name="serverEntryPointsList" value="${execAndShare.serverEntryPointsList}"/>
+<bean id="execShareConnexionFactory" class="org.oLabDynamics.jra.ExecShareConnectionFactory">
+		<!-- <property name="serverEntryPointsList" value="${execAndShare.serverEntryPointsList}"/> -->
+		<property name="libraryForReproducibilityURL" value="${execAndShare.libraryForReproducibilityURL}"/>
+		<property name="infrastructureForReproducibilityURL" value="${execAndShare.infrastructureForReproducibilityURL}"/>
 		<property name="userName" value="${execAndShare.userName}"/>
 		<property name="password" value="${execAndShare.password}"/>
 </bean>
